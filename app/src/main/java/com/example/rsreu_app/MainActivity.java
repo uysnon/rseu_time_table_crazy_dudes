@@ -22,10 +22,12 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences;
+    SharedPreferences preferences;
     EditText groupNumber;
     String editTextValue;
     boolean hasGroup;
     public static final String myPreference = "myPref";
+    public static final String preferenceIsGroup = "isPref";
     public static final String groupKey = "groupKey";
 
 
@@ -42,29 +44,10 @@ public class MainActivity extends AppCompatActivity {
         hasGroup = sharedPreferences.contains("groupKey");
 
         if(!hasGroup){
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-            alertDialog.setTitle("Группа");
-            alertDialog.setIcon(R.drawable.ic_users);
-            final EditText edittext = new EditText(getApplicationContext());
-            alertDialog.setView(edittext);
-
-            alertDialog.setPositiveButton("Далее", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    editTextValue = edittext.getText().toString();
-                    groupNumber.setText(editTextValue);
-                    // добавить проверку, имеется ли на сервере такая группа
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString(groupKey,editTextValue);
-                    editor.apply();
-                }
-            });
-            alertDialog.show();
-
+            showAlertDialog();
         }else{
             groupNumber.setText(sharedPreferences.getString(groupKey,null));
         }
-
                 String previousGroup = groupNumber.getText().toString();
 
                 groupNumber.addTextChangedListener(new TextWatcher() {
@@ -141,5 +124,39 @@ public class MainActivity extends AppCompatActivity {
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
+
+    private void showAlertDialog(){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+        alertDialog.setTitle("Группа");
+        alertDialog.setIcon(R.drawable.ic_users);
+        final EditText edittext = new EditText(getApplicationContext());
+        alertDialog.setView(edittext);
+        alertDialog.setCancelable(false);
+
+        alertDialog.setPositiveButton("Далее", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(isNetworkAvailable()){
+                    editTextValue = edittext.getText().toString();
+                    if(!editTextValue.equals("")){
+                        groupNumber.setText(editTextValue);
+                        // добавить проверку, имеется ли на сервере такая группа
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString(groupKey,editTextValue);
+                        editor.apply();
+                    }else{
+                        Toast.makeText(getApplicationContext(),"Введите Ваш действительный номер группы",Toast.LENGTH_SHORT).show();
+                        showAlertDialog();
+                    }
+                }else{
+                    Toast.makeText(getApplicationContext(),"Необходим доступ к Интернету для первого запуска приложения",Toast.LENGTH_SHORT).show();
+                    showAlertDialog();
+                }
+            }
+        });
+        AlertDialog dialog = alertDialog.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 }
