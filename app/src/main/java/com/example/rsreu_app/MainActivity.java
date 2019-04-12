@@ -1,22 +1,32 @@
 package com.example.rsreu_app;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences;
     EditText groupNumber;
+    String editTextValue;
+    boolean hasGroup;
     public static final String myPreference = "myPref";
     public static final String groupKey = "groupKey";
-
 
 
 
@@ -28,7 +38,67 @@ public class MainActivity extends AppCompatActivity {
         groupNumber = findViewById(R.id.groupNumber);
 
         sharedPreferences = getSharedPreferences(myPreference, Context.MODE_PRIVATE);
-        
+
+        hasGroup = sharedPreferences.contains("groupKey");
+
+        if(!hasGroup){
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+            alertDialog.setTitle("Группа");
+            alertDialog.setIcon(R.drawable.ic_users);
+            final EditText edittext = new EditText(getApplicationContext());
+            alertDialog.setView(edittext);
+
+            alertDialog.setPositiveButton("Далее", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    editTextValue = edittext.getText().toString();
+                    groupNumber.setText(editTextValue);
+                    // добавить проверку, имеется ли на сервере такая группа
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(groupKey,editTextValue);
+                    editor.apply();
+                }
+            });
+            alertDialog.show();
+
+        }else{
+            groupNumber.setText(sharedPreferences.getString(groupKey,null));
+        }
+
+                String previousGroup = groupNumber.getText().toString();
+
+                groupNumber.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString(groupKey,s.toString());
+                       // Toast.makeText(getApplicationContext(),sharedPreferences.getString(groupKey,null),Toast.LENGTH_SHORT).show();
+                        //вытащить нужную группу
+
+                        editor.apply();
+                        if(isNetworkAvailable()){
+                            //получить расписон для группы, но ПЕРЕД этим проверить наличие такой группы
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Отсутствует Интернет-соединение",Toast.LENGTH_SHORT).show();
+                            groupNumber.setText(previousGroup);
+
+                        }
+                    }
+                });
+
+
+        Toast.makeText(getApplicationContext(),sharedPreferences.getString(groupKey,null),Toast.LENGTH_SHORT).show();
+
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
@@ -65,4 +135,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     };
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
 }

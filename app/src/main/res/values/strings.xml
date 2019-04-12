@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Ассистент РГРТУ</string>
-
+    <string name="group">Ваша группа</string>
 </resources>
