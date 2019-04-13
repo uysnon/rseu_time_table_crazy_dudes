@@ -61,30 +61,27 @@ public class MainActivity extends AppCompatActivity {
         }else{
             groupNumber.setText(sharedPreferences.getString(groupKey,null));
         }
-                String previousGroup = groupNumber.getText().toString();
+        String previousGroup = groupNumber.getText().toString();
 
-                groupNumber.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        groupNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
-                    }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
 
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+            @Override
+            public void afterTextChanged(Editable s) {
+                  SharedPreferences.Editor editor = sharedPreferences.edit();
+                  editor.putString(groupKey,s.toString());
 
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString(groupKey,s.toString());
-
-                        editor.apply();
-                        if(isNetworkAvailable() && !s.toString().equals("")){
-                            jsonParse(s.toString());
-                        }else{
-                            Toast.makeText(getApplicationContext(),"Отсутствует Интернет-соединение или поле пусто",Toast.LENGTH_SHORT).show();
-                            groupNumber.setText(previousGroup);
+                  editor.apply();
+                  if(isNetworkAvailable() && !s.toString().equals("")){
+                      mQueue = Volley.newRequestQueue(getApplicationContext());
+                      jsonParse(s.toString());
+                  }else{
+                      Toast.makeText(getApplicationContext(),"Отсутствует Интернет-соединение или поле пусто",Toast.LENGTH_SHORT).show();
+                      groupNumber.setText(previousGroup);
 
                         }
                     }

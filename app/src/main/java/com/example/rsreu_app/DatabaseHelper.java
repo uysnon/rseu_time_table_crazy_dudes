@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -16,6 +17,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, 1);
 
     }
+
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -31,7 +34,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean insertData(int weekDay, int timeId, int duration, int optional, String title, String type,String teachers, String room, String build, String dates, int numerator, int denominator){
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
+        db.beginTransaction();
+       /* ContentValues contentValues = new ContentValues(12); //size
         contentValues.put("weekDay",weekDay);
         contentValues.put("timeId",timeId);
         contentValues.put("duration",duration);
@@ -44,11 +48,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("dates",dates);
         contentValues.put("numerator",numerator);
         contentValues.put("denominator",denominator);
-        long result = db.insert(TABLE_NAME,null, contentValues);
-        if(result == -1)
-            return false;
-        else
-            return true;
+        db.setTransactionSuccessful();
+        db.endTransaction();*/
+
+        String sql = "insert into " + TABLE_NAME + "(weekDay, timeId, duration, optional, title, type, teachers, room, build, dates, numerator, denominator) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        SQLiteStatement stmt = db.compileStatement(sql);
+
+
+        for (int i = 0; i < 12; i++) {
+            //generate some values
+
+            stmt.bindLong(1, weekDay);
+            stmt.bindLong(2, timeId);
+            stmt.bindLong(3, duration);
+            stmt.bindLong(4, optional);
+            stmt.bindString(5, title);
+            stmt.bindString(6, type);
+            stmt.bindString(7, teachers);
+            stmt.bindString(8, room);
+            stmt.bindString(9, build);
+            stmt.bindString(10, dates);
+            stmt.bindLong(11, numerator);
+            stmt.bindLong(12, denominator);
+            stmt.execute();
+            stmt.clearBindings();
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
+        db.close();
+
+        return true;
+
+
     }
 
     public Cursor getAllData(){
