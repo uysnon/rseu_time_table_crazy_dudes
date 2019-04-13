@@ -16,9 +16,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
-
     }
-
 
 
     @Override
@@ -92,6 +90,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_NAME,null);
         return res;
+    }
+
+    public Cursor getInfo(int weekDay, int timeId, int weekBool){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String[] selectionArgs = new String []{ Integer.toString(weekDay), Integer.toString(timeId), Integer.toString(weekBool)};
+
+        return db.rawQuery("select * from schedule_table where weekDay=? and timeId=? and weekBool=?",selectionArgs);
+
     }
 
     public boolean updateData(String id,int weekDay, int timeId, int duration, int optional, String title, String type,String teachers, String room, String build, String dates, int weekBool) {

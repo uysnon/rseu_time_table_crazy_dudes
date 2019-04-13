@@ -3,6 +3,7 @@ package com.example.rsreu_app;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+
         Toast.makeText(getApplicationContext(),sharedPreferences.getString(groupKey,null),Toast.LENGTH_SHORT).show();
 
 
@@ -101,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.nav_schedule:
                     selectedFragment = new ScheduleFragment();
+
                     break;
                 case R.id.nav_news:
                     selectedFragment = new NewsFragment();
@@ -179,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
                     myDB = new DatabaseHelper(getApplicationContext());
 
+
                     Log.d("myLogs1",String.valueOf(jsonArrayNumerator.length()));
                     Log.d("myLogs1",String.valueOf(jsonArrayDenominator.length()));
                     for(int i = 0; i < jsonArrayNumerator.length(); i++){
@@ -224,6 +228,9 @@ public class MainActivity extends AppCompatActivity {
 
                     }
 
+                    myDB.close();
+
+
                     groupNumber.setText(groupNumberUrl);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString(groupKey,editTextValue);
@@ -246,5 +253,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mQueue.add(request);
+    }
+
+    public String getAnyColumnValueExample(Context context,int weekDay,int timeId, int weekBool, String columnYouWant){
+        myDB = new DatabaseHelper(context);
+
+        Cursor c = myDB.getInfo(weekDay,timeId,weekBool);
+
+
+        return c.getString(c.getColumnIndex("title"));  // columnYouWant вместо title
     }
 }
