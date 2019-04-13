@@ -35,8 +35,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean insertData(int weekDay, int timeId, int duration, int optional, String title, String type,String teachers, String room, String build, String dates, int numerator, int denominator){
         SQLiteDatabase db = this.getWritableDatabase();
-        db.beginTransaction();
-       /* ContentValues contentValues = new ContentValues(12); //size
+
+
+        ContentValues contentValues = new ContentValues(); //size
         contentValues.put("weekDay",weekDay);
         contentValues.put("timeId",timeId);
         contentValues.put("duration",duration);
@@ -49,10 +50,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("dates",dates);
         contentValues.put("numerator",numerator);
         contentValues.put("denominator",denominator);
-        db.setTransactionSuccessful();
-        db.endTransaction();*/
 
-        String sql = "insert into " + TABLE_NAME + "(weekDay, timeId, duration, optional, title, type, teachers, room, build, dates, numerator, denominator) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        /*String sql = "insert into " + TABLE_NAME + "(weekDay, timeId, duration, optional, title, type, teachers, room, build, dates, numerator, denominator) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         SQLiteStatement stmt = db.compileStatement(sql);
 
 
@@ -79,9 +78,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.setTransactionSuccessful();
         db.endTransaction();
 
-        db.close();
+        db.close();*/
 
-        return true;
+        long result = db.insert(TABLE_NAME,null ,contentValues);
+        if(result == -1)
+            return false;
+        else
+            return true;
 
 
     }

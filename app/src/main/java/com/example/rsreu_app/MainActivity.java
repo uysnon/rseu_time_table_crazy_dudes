@@ -61,31 +61,19 @@ public class MainActivity extends AppCompatActivity {
         }else{
             groupNumber.setText(sharedPreferences.getString(groupKey,null));
         }
-        String previousGroup = groupNumber.getText().toString();
 
-        groupNumber.addTextChangedListener(new TextWatcher() {
+        groupNumber.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            public void onClick(View v) {
+                if(isNetworkAvailable()){
+                    showAlertDialog();
+                }else{
+                    Toast.makeText(getApplicationContext(),"Требуется Интернет-соединение чтобы изменить номер группы",Toast.LENGTH_SHORT).show();
+                    groupNumber.setText(sharedPreferences.getString(groupKey,null));
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                  SharedPreferences.Editor editor = sharedPreferences.edit();
-                  editor.putString(groupKey,s.toString());
-
-                  editor.apply();
-                  if(isNetworkAvailable() && !s.toString().equals("")){
-                      mQueue = Volley.newRequestQueue(getApplicationContext());
-                      jsonParse(s.toString());
-                  }else{
-                      Toast.makeText(getApplicationContext(),"Отсутствует Интернет-соединение или поле пусто",Toast.LENGTH_SHORT).show();
-                      groupNumber.setText(previousGroup);
-
-                        }
-                    }
-                });
+                }
+            }
+        });
 
 
         Toast.makeText(getApplicationContext(),sharedPreferences.getString(groupKey,null),Toast.LENGTH_SHORT).show();
@@ -152,6 +140,8 @@ public class MainActivity extends AppCompatActivity {
                     if(!editTextValue.equals("")){
                         mQueue = Volley.newRequestQueue(getApplicationContext());
                         jsonParse(editTextValue);
+                        dialog.dismiss();
+                        dialog.cancel();
                     }else{
                         Toast.makeText(getApplicationContext(),"Поле не может быть пустым",Toast.LENGTH_SHORT).show();
                         showAlertDialog();
@@ -197,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
                         denominatorBool = 0;
                         numeratorBool = 1;
                         weekDay = numerator.getInt("weekDay");
+                        Log.d("myweekDay",Integer.toString(weekDay));
                         timeId = numerator.getInt("timeId");
                         duration = numerator.getInt("duration");
                         optional = numerator.getInt("optional");
@@ -210,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
 
                         isInserted = myDB.insertData(weekDay,timeId,duration,optional,title,type,teachers,room, build,dates, numeratorBool, denominatorBool);
 
-                        Log.d("myLogs",String.valueOf(isInserted));
+                        Log.d("myLogs",String.valueOf(isInserted + Integer.toString(i)));
                     }
 
                     for(int i = 0; i < jsonArrayDenominator.length(); i++){
@@ -231,12 +222,8 @@ public class MainActivity extends AppCompatActivity {
                         dates = denominator.getString("dates");
 
                         isInserted = myDB.insertData(weekDay,timeId,duration,optional,title,type,teachers,room,build,dates, numeratorBool, denominatorBool);
-                        if(isInserted){
-                            //
-                        }else{
-                           //
-                        }
 
+                        Log.d("myLogs",String.valueOf(isInserted + Integer.toString(i)));
 
                     }
 
@@ -248,6 +235,8 @@ public class MainActivity extends AppCompatActivity {
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
+
+                mQueue.stop();
 
             }
         }, new Response.ErrorListener() {
