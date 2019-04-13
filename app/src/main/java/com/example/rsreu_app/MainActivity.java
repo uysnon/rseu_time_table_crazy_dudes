@@ -189,6 +189,8 @@ public class MainActivity extends AppCompatActivity {
 
                     myDB = new DatabaseHelper(getApplicationContext());
 
+                    Log.d("myLogs1",String.valueOf(jsonArrayNumerator.length()));
+                    Log.d("myLogs1",String.valueOf(jsonArrayDenominator.length()));
                     for(int i = 0; i < jsonArrayNumerator.length(); i++){
                         JSONObject numerator = jsonArrayNumerator.getJSONObject(i);
                         //потом всё в метод вынесем
@@ -212,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     for(int i = 0; i < jsonArrayDenominator.length(); i++){
-                        JSONObject denominator = jsonArrayNumerator.getJSONObject(i);
+                        JSONObject denominator = jsonArrayDenominator.getJSONObject(i);
                         denominatorBool = 1;
                         numeratorBool = 0;
 
