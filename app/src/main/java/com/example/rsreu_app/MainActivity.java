@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                     JSONArray jsonArrayNumerator = response.getJSONArray("numerator");
                     JSONArray jsonArrayDenominator = response.getJSONArray("denominator");
 
-                    int numeratorBool, denominatorBool;
+                    int weekBool; // 1 - числитель и 0 - знаменатель
                     int weekDay, timeId, duration, optional;
                     String title, type, teachers, room, build, dates;
                     boolean isInserted;
@@ -184,8 +184,7 @@ public class MainActivity extends AppCompatActivity {
                     for(int i = 0; i < jsonArrayNumerator.length(); i++){
                         JSONObject numerator = jsonArrayNumerator.getJSONObject(i);
                         //потом всё в метод вынесем
-                        denominatorBool = 0;
-                        numeratorBool = 1;
+                        weekBool = 1;
                         weekDay = numerator.getInt("weekDay");
                         Log.d("myweekDay",Integer.toString(weekDay));
                         timeId = numerator.getInt("timeId");
@@ -199,16 +198,14 @@ public class MainActivity extends AppCompatActivity {
                         //date pattern dd.MM парсить строку до запятой и пихнуть в массив дату, и так пока видим запятые
                         dates = numerator.getString("dates");
 
-                        isInserted = myDB.insertData(weekDay,timeId,duration,optional,title,type,teachers,room, build,dates, numeratorBool, denominatorBool);
+                        isInserted = myDB.insertData(weekDay,timeId,duration,optional,title,type,teachers,room, build,dates, weekBool);
 
                         Log.d("myLogs",String.valueOf(isInserted + Integer.toString(i)));
                     }
 
                     for(int i = 0; i < jsonArrayDenominator.length(); i++){
                         JSONObject denominator = jsonArrayDenominator.getJSONObject(i);
-                        denominatorBool = 1;
-                        numeratorBool = 0;
-
+                        weekBool = 0;
                         weekDay = denominator.getInt("weekDay");
                         timeId = denominator.getInt("timeId");
                         duration = denominator.getInt("duration");
@@ -221,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                         //date pattern dd.MM парсить строку до запятой и пихнуть в массив дату, и так пока видим запятые
                         dates = denominator.getString("dates");
 
-                        isInserted = myDB.insertData(weekDay,timeId,duration,optional,title,type,teachers,room,build,dates, numeratorBool, denominatorBool);
+                        isInserted = myDB.insertData(weekDay,timeId,duration,optional,title,type,teachers,room,build,dates, weekBool);
 
                         Log.d("myLogs",String.valueOf(isInserted + Integer.toString(i)));
 

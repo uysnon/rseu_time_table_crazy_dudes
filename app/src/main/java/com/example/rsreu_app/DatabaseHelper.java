@@ -24,7 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + TABLE_NAME +" (id INTEGER PRIMARY KEY AUTOINCREMENT, weekDay INTEGER, timeId INTEGER, duration INTEGER, optional INTEGER, title TEXT, type TEXT, teachers TEXT," +
-                "room TEXT, build TEXT, dates TEXT, numerator INTEGER, denominator INTEGER)");
+                "room TEXT, build TEXT, dates TEXT, weekBool INTEGER)");
     }
 
     @Override
@@ -33,7 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertData(int weekDay, int timeId, int duration, int optional, String title, String type,String teachers, String room, String build, String dates, int numerator, int denominator){
+    public boolean insertData(int weekDay, int timeId, int duration, int optional, String title, String type,String teachers, String room, String build, String dates, int weekBool){
         SQLiteDatabase db = this.getWritableDatabase();
 
 
@@ -48,8 +48,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("room",room);
         contentValues.put("build",build);
         contentValues.put("dates",dates);
-        contentValues.put("numerator",numerator);
-        contentValues.put("denominator",denominator);
+        contentValues.put("weekBool",weekBool);
 
         /*String sql = "insert into " + TABLE_NAME + "(weekDay, timeId, duration, optional, title, type, teachers, room, build, dates, numerator, denominator) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         SQLiteStatement stmt = db.compileStatement(sql);
@@ -95,7 +94,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public boolean updateData(String id,int weekDay, int timeId, int duration, int optional, String title, String type,String teachers, String room, String build, String dates, int numerator, int denominator) {
+    public boolean updateData(String id,int weekDay, int timeId, int duration, int optional, String title, String type,String teachers, String room, String build, String dates, int weekBool) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("id",id);
@@ -109,8 +108,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("room",room);
         contentValues.put("build",build);
         contentValues.put("dates",dates);
-        contentValues.put("numerator",numerator);
-        contentValues.put("denominator",denominator);
+        contentValues.put("weekBool",weekBool);
         db.update(TABLE_NAME, contentValues, "id = ?",new String[] { id });
         return true;
     }
