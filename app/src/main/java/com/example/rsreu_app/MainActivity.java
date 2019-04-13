@@ -35,6 +35,7 @@ import org.json.JSONObject;
 public class MainActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences;
+    DatabaseHelper myDB;
     EditText groupNumber;
     String editTextValue;
     boolean hasGroup;
@@ -79,10 +80,10 @@ public class MainActivity extends AppCompatActivity {
                         editor.putString(groupKey,s.toString());
 
                         editor.apply();
-                        if(isNetworkAvailable()){
-                            //получить расписон для группы, но ПЕРЕД этим проверить наличие такой группы
+                        if(isNetworkAvailable() && !s.toString().equals("")){
+                            jsonParse(s.toString());
                         }else{
-                            Toast.makeText(getApplicationContext(),"Отсутствует Интернет-соединение",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(),"Отсутствует Интернет-соединение или поле пусто",Toast.LENGTH_SHORT).show();
                             groupNumber.setText(previousGroup);
 
                         }
@@ -174,25 +175,28 @@ public class MainActivity extends AppCompatActivity {
         String url = "http://rsreu.ru/schedule/";
         url = url.concat(groupNumberUrl + ".json");
 
-        Log.d("myLogs",url);
+       // Log.d("myLogs",url);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    Log.d("myLogs","works");
+                    //Log.d("myLogs","works");
                     JSONArray jsonArrayNumerator = response.getJSONArray("numerator");
                     JSONArray jsonArrayDenominator = response.getJSONArray("denominator");
 
-                    boolean numeratorBool, denominatorBool;
+                    int numeratorBool, denominatorBool;
                     int weekDay, timeId, duration, optional;
                     String title, type, teachers, room, build, dates;
+                    boolean isInserted;
+
+                    myDB = new DatabaseHelper(getApplicationContext());
 
                     for(int i = 0; i < jsonArrayNumerator.length(); i++){
                         JSONObject numerator = jsonArrayNumerator.getJSONObject(i);
                         //потом всё в метод вынесем
-                        denominatorBool = false;
-                        numeratorBool = true;
+                        denominatorBool = 0;
+                        numeratorBool = 1;
                         weekDay = numerator.getInt("weekDay");
                         timeId = numerator.getInt("timeId");
                         duration = numerator.getInt("duration");
@@ -205,13 +209,15 @@ public class MainActivity extends AppCompatActivity {
                         //date pattern dd.MM парсить строку до запятой и пихнуть в массив дату, и так пока видим запятые
                         dates = numerator.getString("dates");
 
+                        isInserted = myDB.insertData(weekDay,timeId,duration,optional,title,type,teachers,room, build,dates, numeratorBool, denominatorBool);
 
+                        Log.d("myLogs",String.valueOf(isInserted));
                     }
 
                     for(int i = 0; i < jsonArrayDenominator.length(); i++){
                         JSONObject denominator = jsonArrayNumerator.getJSONObject(i);
-                        denominatorBool = true;
-                        numeratorBool = false;
+                        denominatorBool = 1;
+                        numeratorBool = 0;
 
                         weekDay = denominator.getInt("weekDay");
                         timeId = denominator.getInt("timeId");
@@ -224,6 +230,14 @@ public class MainActivity extends AppCompatActivity {
                         build = denominator.getString("build");
                         //date pattern dd.MM парсить строку до запятой и пихнуть в массив дату, и так пока видим запятые
                         dates = denominator.getString("dates");
+
+                        isInserted = myDB.insertData(weekDay,timeId,duration,optional,title,type,teachers,room,build,dates, numeratorBool, denominatorBool);
+                        if(isInserted){
+                            //
+                        }else{
+                           //
+                        }
+
 
                     }
 
