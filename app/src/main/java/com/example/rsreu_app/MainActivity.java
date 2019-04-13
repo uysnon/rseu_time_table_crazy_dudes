@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -151,15 +152,8 @@ public class MainActivity extends AppCompatActivity {
                 if(isNetworkAvailable()){
                     editTextValue = edittext.getText().toString();
                     if(!editTextValue.equals("")){
-                        groupNumber.setText(editTextValue);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-
                         mQueue = Volley.newRequestQueue(getApplicationContext());
                         jsonParse(editTextValue);
-
-
-                        editor.putString(groupKey,editTextValue);
-                        editor.apply();
                     }else{
                         Toast.makeText(getApplicationContext(),"Поле не может быть пустым",Toast.LENGTH_SHORT).show();
                         showAlertDialog();
@@ -175,15 +169,18 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void jsonParse(String groupNumber){
+    public void jsonParse(String groupNumberUrl){
 
         String url = "http://rsreu.ru/schedule/";
-        url = url.concat(groupNumber + ".json");
+        url = url.concat(groupNumberUrl + ".json");
+
+        Log.d("myLogs",url);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
+                    Log.d("myLogs","works");
                     JSONArray jsonArrayNumerator = response.getJSONArray("numerator");
                     JSONArray jsonArrayDenominator = response.getJSONArray("denominator");
 
@@ -209,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
                         dates = numerator.getString("dates");
 
 
-
                     }
 
                     for(int i = 0; i < jsonArrayDenominator.length(); i++){
@@ -231,6 +227,11 @@ public class MainActivity extends AppCompatActivity {
 
                     }
 
+                    groupNumber.setText(groupNumberUrl);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(groupKey,editTextValue);
+                    editor.apply();
+
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -239,10 +240,12 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(),"Сервер временно недоступен, повторите позднее(или такой группы нет)",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"Сервер временно недоступен или группа не найдена",Toast.LENGTH_SHORT).show();
                 error.printStackTrace();
                 showAlertDialog();
             }
         });
+
+        mQueue.add(request);
     }
 }
