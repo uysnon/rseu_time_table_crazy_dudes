@@ -1,8 +1,9 @@
 package com.example.rsreu_app.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Day {
+public class Day implements Serializable {
     private ArrayList<Lesson> lessons;
     private int weekDay;
 
@@ -22,7 +23,7 @@ public class Day {
         return weekDay;
     }
 
-    public ArrayList<Lesson> getLesson() {
+    public ArrayList<Lesson> getLessons() {
         return lessons;
     }
 

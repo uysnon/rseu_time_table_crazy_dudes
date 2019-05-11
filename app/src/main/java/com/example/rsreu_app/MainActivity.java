@@ -3,19 +3,14 @@ package com.example.rsreu_app;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.CursorIndexOutOfBoundsException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,18 +21,14 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.rsreu_app.model.Day;
-import com.example.rsreu_app.model.Lesson;
-import com.example.rsreu_app.model.Week;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,8 +40,7 @@ public class MainActivity extends AppCompatActivity {
     public RequestQueue mQueue;
     public static final String myPreference = "myPref";
     public static final String groupKey = "groupKey";
-    public Week nominatorWeek;
-    public Week denominatorWeek;
+    Date mDate;
 
 
 
@@ -110,8 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
             switch (item.getItemId()) {
                 case R.id.nav_schedule:
-                    selectedFragment = new ScheduleFragment();
-
+                    selectedFragment =  ScheduleFragment.newInstance(mDate);
                     break;
                 case R.id.nav_news:
                     selectedFragment = new NewsFragment();
@@ -151,10 +140,10 @@ public class MainActivity extends AppCompatActivity {
                     if(!editTextValue.equals("")){
                         mQueue = Volley.newRequestQueue(getApplicationContext());
                         jsonParse(editTextValue);
-                        nominatorWeek = createWeek(getApplicationContext(), true);
-                        denominatorWeek = createWeek(getApplicationContext(), false);
                         dialog.dismiss();
                         dialog.cancel();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                                ScheduleFragment.newInstance(mDate)).commit();
 
                     }else{
                         Toast.makeText(getApplicationContext(),"Поле не может быть пустым",Toast.LENGTH_SHORT).show();
@@ -186,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                     JSONArray jsonArrayNumerator = response.getJSONArray("numerator");
                     JSONArray jsonArrayDenominator = response.getJSONArray("denominator");
 
-                    int weekBool; // 1 - числитель и 0 - знаменатель
+                    int weekBool; // 1 - числитель; 0 - знаменатель
                     int weekDay, timeId, duration, optional;
                     String title, type, teachers, room, build, dates;
                     boolean isInserted;
@@ -266,66 +255,6 @@ public class MainActivity extends AppCompatActivity {
         mQueue.add(request);
     }
 
-    /**
-     * Создание объекта недели
-     * @param context контекст, из которого вызывается метод
-     * @param numerator true - числитель
-     *                  false - знаменатель
-     * @return объект Week
-     */
-    private Week createWeek(Context context, boolean numerator) {
-        DatabaseHelper myDB;
-        myDB = new DatabaseHelper(context);
-        Week week = new Week();
-        week.setNumerator(numerator);
-        for (int weekDay = 1; weekDay <= 7; weekDay++) {
-            ArrayList<Lesson> lessons = new ArrayList<>();
-            for (int timeId = 1; timeId <= 9; timeId++) {
-                Cursor c  = null;
-                try {
-                    c = myDB.getInfo(weekDay, timeId, 0);
-                    int count = c.getCount();
-                    c.moveToFirst();
-                    String title = c.getString(c.getColumnIndex("title"));
-                    String type = c.getString(c.getColumnIndex("type"));
-                    boolean optional = (1 == c.getInt(c.getColumnIndex("optional")));
-                    ArrayList<String> teachers = new ArrayList<>();
-                    teachers.add(c.getString(c.getColumnIndex("teachers")));
-                    Integer duration = c.getInt(c.getColumnIndex("duration"));
-                    String room = c.getString(c.getColumnIndex("room"));
-                    String build = c.getString(c.getColumnIndex("build"));
-                    String dates = c.getString(c.getColumnIndex("dates"));
-                    Lesson lesson = new Lesson(
-                            timeId,
-                            duration,
-                            title,
-                            type,
-                            optional,
-                            teachers,
-                            room,
-                            build,
-                            dates
-                    );
-                    Log.d("myLog", "day_"+weekDay+" timeId_"+timeId+ " title_" + title);
-                    lessons.add(lesson);
-                }catch (CursorIndexOutOfBoundsException e){
-                }
-                finally {
-                    c.close();
-                }
-            }
-            Day day = new Day();
-            day.setWeekDay(weekDay);
-            day.setLessons(lessons);
-            week.addDay(day);
-        }
-        myDB.close();
-        return week;
-    }
 
-    public void setWeeksData(){
-        nominatorWeek = createWeek(this, true);
-        denominatorWeek = createWeek(this, false);
-    }
 
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="time_lesson">Время занятия</string>
+    <string name="name_lesson">Название предмета</string>
+    <string name="teacher">Преподаватель</string>
+    <string name="audience">Аудитория</string>
+</resources>

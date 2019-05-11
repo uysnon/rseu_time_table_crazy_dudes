@@ -11,22 +11,35 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+
 import com.example.rsreu_app.model.Day;
 import com.example.rsreu_app.model.Lesson;
 import com.example.rsreu_app.model.Week;
+import com.levitnudi.legacytableview.LegacyTableView;
 
 import java.util.ArrayList;
 
+import static com.levitnudi.legacytableview.LegacyTableView.GOLDALINE;
+
+/**
+ * PageFragmant отображает информацию по 1 дню,
+ * как правило вызов происходит иp MyPageAdapter,
+ * в котором хранится неделя
+ */
 public class PageFragment extends Fragment {
 
-    private int pageNumber;
+    private static final String DAY_KEY = "day_key_PageFragment";
+    private static final int NUM_COLUMNS = 4;
+
+    private LegacyTableView mTableView;
+
+    private Day mDay;
 
 
-
-    public static PageFragment newInstance(int page) {
+    public static PageFragment newInstance(Day day) {
         PageFragment fragment = new PageFragment();
         Bundle args = new Bundle();
-        args.putInt("num", page);
+        args.putSerializable(DAY_KEY, day);
         fragment.setArguments(args);
         return fragment;
     }
@@ -37,17 +50,37 @@ public class PageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pageNumber = getArguments() != null ? getArguments().getInt("num") : 1;
+
+
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_page, container, false);
-        TextView pageHeader = view.findViewById(R.id.textView);
+        if (getArguments() != null) {
+            mDay = (Day) getArguments().getSerializable(DAY_KEY);
+        } else {
+            mDay = null;
+        }
 
-        String header = "Фрагмент " + Integer.toString(pageNumber + 1);
-        pageHeader.setText(header);
+        mTableView = view.findViewById(R.id.time_table_view);
+        LegacyTableView.insertLegacyTitle(
+                getString(R.string.time_lesson),
+                getString(R.string.name_lesson),
+                getString(R.string.teacher),
+                getString(R.string.audience)
+        );
+        String array[] = new String [16];
+        for (int i = 0; i < array.length; i++){
+            array[i] = Integer.toString(i+1);
+        }
+        LegacyTableView.insertLegacyContent(getStringArrayContentTable());
+        mTableView.setTitle(LegacyTableView.readLegacyTitle());
+        mTableView.setContent(LegacyTableView.readLegacyContent());
+        mTableView.setHorizontalScrollBarEnabled(false);
+        mTableView.setTheme(GOLDALINE);
+        mTableView.build();
 
         return view;
     }
@@ -63,5 +96,27 @@ public class PageFragment extends Fragment {
         return c.getString(c.getColumnIndex("title"));  // columnYouWant вместо title
     }
 
+    /**
+     * Получение строкового массива,
+     * который будет испльзоваться для заполнения полей таблицы
+     * @return строковый массив для контента таблицы.
+     */
+    private String[] getStringArrayContentTable() {
+        String[] content = new String[mDay.getLessons().size() * NUM_COLUMNS];
+        int index =0;
+        for (int i = 0; i < mDay.getLessons().size(); i++) {
+            Lesson lesson = mDay.getLessons().get(i);
+            content[index++] = lesson.getTimeFromTimeId();
+            content[index++] = lesson.getTitle();
+            content[index] = "";
+            for (int j = 0; j < lesson.getTeachers().size(); j++) {
+                content[index] = content[index] + lesson.getTeachers().get(j);
+            }
+            index++;
+            content[index++] = lesson.getRoom();
+        }
+        return content;
+
+    }
 
 }
