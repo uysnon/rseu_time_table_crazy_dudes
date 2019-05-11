@@ -67,8 +67,10 @@ public class ScheduleFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-
-
     }
+    @Override
+    public void onStop(){
+        super.onStop();
+    }
+
 }
