@@ -31,6 +31,8 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
     ViewPager pager;
     Week mWeek;
     Date mDate;
+    Date mFirstDayOfSemester;
+    boolean mIsFirstDayNumerator;
     private LinearLayout mLayoutGoNext;
     private LinearLayout mLayoutGoPrev;
     private LinearLayout mLayoutDatePicker;
@@ -38,6 +40,7 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
     private int mCurrentDayOfWeek;
     private boolean mIsNumerator;
     private SimpleDateFormat mSimpleDateFormat;
+    private MyPageAdapter mPageAdapter;
 
 
     public static ScheduleFragment newInstance() {
@@ -58,6 +61,15 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         mLayoutDatePicker = view.findViewById(R.id.layout_datePicker);
         mTextViewDate = view.findViewById(R.id.text_date);
         fullSchedule = view.findViewById(R.id.fullSchedule);
+        pager = view.findViewById(R.id.pager);
+        mDate = new Date();
+        /*
+        Покачто данные взяты "с воздуха", далее должны быть заменены взтыми из бд
+         */
+        mIsFirstDayNumerator = true;
+        mFirstDayOfSemester = new Date(2019, 2, 11);
+        /*
+         */
         fullSchedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,12 +77,10 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
             }
         });
         Log.d("SCHEDULE_FRAGMENT", "ОНКРЕАТЕ ВЬЮ");
-        if (mWeek == null) {
-            mWeek = Week.createWeek(getActivity(), false);
-        }
+
+        mWeek = Week.createWeek(getActivity(), Week.isDateNumerator(mDate, mFirstDayOfSemester, mIsFirstDayNumerator));
         if (mWeek != null) {
-            pager = view.findViewById(R.id.pager);
-            Log.d("SCHEDULE_FRAGMENT", "СОЗДАЕМ ТАБЛИЧКУ");
+            mPageAdapter= new MyPageAdapter(getFragmentManager(), mWeek);
             pager.setAdapter(new MyPageAdapter(getFragmentManager(), mWeek));
         }
         mLayoutGoNext.setOnClickListener(new View.OnClickListener() {
@@ -82,13 +92,13 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         mLayoutGoPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pager.setCurrentItem(pager.getCurrentItem()-1);
+                pager.setCurrentItem(pager.getCurrentItem() - 1);
             }
         });
         mLayoutDatePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerFragment datePicker = new DatePickerFragment();
+                DatePickerFragment datePicker = DatePickerFragment.newInstance(mDate);
                 datePicker.setTargetFragment(ScheduleFragment.this, 0);
                 datePicker.show(getActivity().getSupportFragmentManager(), "date picker");
             }
@@ -96,8 +106,8 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         mSimpleDateFormat = new SimpleDateFormat("dd/MM");
         Date date = new Date();
         GregorianCalendar dateG = new GregorianCalendar(date.getYear(), date.getMonth(), date.getDay());
-        mTextViewDate.setText(mSimpleDateFormat.format(date));
-        mCurrentDayOfWeek = dateG.get(dateG.DAY_OF_WEEK);
+        mCurrentDayOfWeek = dateG.get(dateG.DAY_OF_WEEK)-1;
+        setTextViewDate();
         return view;
     }
 
@@ -114,9 +124,31 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
         GregorianCalendar dateG = new GregorianCalendar(year, month, dayOfMonth);
-        Date date = new Date(year, month, dayOfMonth);
-        mTextViewDate.setText(mSimpleDateFormat.format(date));
-        Log.d("DATEPICKER", "onDateSet()");
-        mCurrentDayOfWeek = dateG.get(dateG.DAY_OF_WEEK);
+        mDate =  dateG.getTime();
+        mCurrentDayOfWeek = dateG.get(dateG.DAY_OF_WEEK)-1;
+        updateTimeTable();
+        setTextViewDate();
+
+
+    }
+
+    private void setTextViewDate() {
+        mTextViewDate.setText(
+                mSimpleDateFormat.format(mDate) +
+                Week.getNameDayFromItsNum(getActivity(), mCurrentDayOfWeek) +
+                mWeek.getNameNumerator(getActivity())
+        );
+    }
+
+    private void updateTimeTable() {
+        if (mWeek.isNumerator() == Week.isDateNumerator(mDate, mFirstDayOfSemester, mIsFirstDayNumerator)) {
+            pager.setCurrentItem(mCurrentDayOfWeek);
+        } else {
+            if (mWeek.isNumerator() == Week.isDateNumerator(mDate, mFirstDayOfSemester, mIsFirstDayNumerator)) {
+                mWeek = Week.createWeek(getActivity(), !mWeek.isNumerator());
+                mPageAdapter.setWeek(mWeek);
+                pager.setCurrentItem(mCurrentDayOfWeek);
+            }
+        }
     }
 }

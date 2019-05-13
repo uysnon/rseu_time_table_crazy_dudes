@@ -9,15 +9,26 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 
 import java.util.Calendar;
+import java.util.Date;
 
 public class DatePickerFragment extends DialogFragment {
+    private static String KEY_DATE = "date";
+    private Date mDate;
+
+    public static  DatePickerFragment newInstance(Date date){
+        DatePickerFragment datePickerFragment = new DatePickerFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(KEY_DATE, date);
+        datePickerFragment.setArguments(args);
+        return datePickerFragment;
+    }
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        mDate = (Date)getArguments().getSerializable(KEY_DATE);
+        int year = mDate.getYear();
+        int month = mDate.getMonth();
+        int day = mDate.getDay();
         return new DatePickerDialog(
                 getActivity(),
                 (DatePickerDialog.OnDateSetListener)getTargetFragment(),
