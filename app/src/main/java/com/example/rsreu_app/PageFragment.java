@@ -23,7 +23,7 @@ import static com.levitnudi.legacytableview.LegacyTableView.GOLDALINE;
 
 /**
  * PageFragmant отображает информацию по 1 дню,
- * как правило вызов происходит иp MyPageAdapter,
+ * как правило вызов происходит из MyPageAdapter,
  * в котором хранится неделя
  */
 public class PageFragment extends Fragment {
@@ -71,9 +71,9 @@ public class PageFragment extends Fragment {
                 getString(R.string.teacher),
                 getString(R.string.audience)
         );
-        String array[] = new String [16];
-        for (int i = 0; i < array.length; i++){
-            array[i] = Integer.toString(i+1);
+        String array[] = new String[16];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = Integer.toString(i + 1);
         }
         LegacyTableView.insertLegacyContent(getStringArrayContentTable());
         mTableView.setTitle(LegacyTableView.readLegacyTitle());
@@ -89,21 +89,19 @@ public class PageFragment extends Fragment {
     private String getAnyColumnValueExample(Context context, int weekDay, int timeId, int weekBool, String columnYouWant) {
         DatabaseHelper myDB;
         myDB = new DatabaseHelper(context);
-
         Cursor c = myDB.getInfo(weekDay, timeId, weekBool);
-
-
         return c.getString(c.getColumnIndex("title"));  // columnYouWant вместо title
     }
 
     /**
      * Получение строкового массива,
      * который будет испльзоваться для заполнения полей таблицы
+     *
      * @return строковый массив для контента таблицы.
      */
     private String[] getStringArrayContentTable() {
         String[] content = new String[mDay.getLessons().size() * NUM_COLUMNS];
-        int index =0;
+        int index = 0;
         for (int i = 0; i < mDay.getLessons().size(); i++) {
             Lesson lesson = mDay.getLessons().get(i);
             content[index++] = lesson.getTimeFromTimeId();

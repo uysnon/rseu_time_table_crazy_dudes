@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     public RequestQueue mQueue;
     public static final String myPreference = "myPref";
     public static final String groupKey = "groupKey";
-    Date mDate;
 
 
 
@@ -100,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
             switch (item.getItemId()) {
                 case R.id.nav_schedule:
-                    selectedFragment =  ScheduleFragment.newInstance(mDate);
+                    selectedFragment =  ScheduleFragment.newInstance();
                     break;
                 case R.id.nav_news:
                     selectedFragment = new NewsFragment();
@@ -140,10 +139,8 @@ public class MainActivity extends AppCompatActivity {
                     if(!editTextValue.equals("")){
                         mQueue = Volley.newRequestQueue(getApplicationContext());
                         jsonParse(editTextValue);
-                        dialog.dismiss();
-                        dialog.cancel();
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                                ScheduleFragment.newInstance(mDate)).commit();
+                                ScheduleFragment.newInstance()).commit();
 
                     }else{
                         Toast.makeText(getApplicationContext(),"Поле не может быть пустым",Toast.LENGTH_SHORT).show();
