@@ -67,6 +67,7 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         Log.d("SCHEDULE_FRAGMENT", "ОНКРЕАТЕ ВЬЮ");
         if (mWeek == null) {
             mWeek = Week.createWeek(getActivity(), false);
+        }
         if (mWeek != null) {
             pager = view.findViewById(R.id.pager);
             Log.d("SCHEDULE_FRAGMENT", "СОЗДАЕМ ТАБЛИЧКУ");
