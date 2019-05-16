@@ -136,31 +136,52 @@ public class Week implements Serializable {
 
     /**
      * Получить название дня неделя по его номеру
+     *
      * @param context контекст
-     * @param numDay номер дня в недели (пн-1 .. вс-7)
+     * @param numDay  номер дня в недели (пн-1 .. вс-7)
      * @return название дня недели
      */
-    public static String getNameDayFromItsNum(Context context, int numDay){
-        switch (numDay){
-            case (1):return context.getString(R.string.monday);
-            case (2):return context.getString(R.string.tuesday);
-            case (3):return context.getString(R.string.wednesday);
-            case (4):return context.getString(R.string.thursday);
-            case (5):return context.getString(R.string.friday);
-            case (6):return context.getString(R.string.saturday);
-            case (7):return context.getString(R.string.sunday);
-            default: return "";
+    public static String getNameDayFromItsNum(Context context, int numDay) {
+        switch (numDay) {
+            case (1):
+                return context.getString(R.string.monday);
+            case (2):
+                return context.getString(R.string.tuesday);
+            case (3):
+                return context.getString(R.string.wednesday);
+            case (4):
+                return context.getString(R.string.thursday);
+            case (5):
+                return context.getString(R.string.friday);
+            case (6):
+                return context.getString(R.string.saturday);
+            case (7):
+                return context.getString(R.string.sunday);
+            default:
+                return "";
         }
     }
 
     /**
      * Получение названия числителя/знаменателя из свойств объекта
+     *
      * @param context контекст
      * @return название недели (числитель/знаменатель)
      */
-    public  String getNameNumerator(Context context){
+    public String getNameNumerator(Context context) {
         if (this.isNumerator()) return context.getString(R.string.numerator);
         else return context.getString(R.string.denominator);
+    }
+
+    /**
+     * Возвращение дня, сделано из-за несостыковки индексов
+     * Напр. пн - 1 день недели, но индекс - 0
+     *
+     * @param numDay номер дня недели пн - 1, .. , вс - 7
+     * @return искомый день недели
+     */
+    public Day getDay(int numDay) {
+        return getDays().get(numDay - 1);
     }
 
 

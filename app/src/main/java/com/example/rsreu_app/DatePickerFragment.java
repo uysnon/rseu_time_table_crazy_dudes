@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.text.format.DateFormat;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -25,10 +26,12 @@ public class DatePickerFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        mDate = (Date)getArguments().getSerializable(KEY_DATE);
-        int year = mDate.getYear();
-        int month = mDate.getMonth();
-        int day = mDate.getDay();
+        if (getArguments() != null) {
+            mDate = (Date)getArguments().getSerializable(KEY_DATE);
+        }
+        int year = Integer.valueOf((String)DateFormat.format("yyyy", mDate));
+        int month = Integer.valueOf((String)DateFormat.format("MM", mDate))-1;
+        int day = Integer.valueOf((String)DateFormat.format("dd", mDate));
         return new DatePickerDialog(
                 getActivity(),
                 (DatePickerDialog.OnDateSetListener)getTargetFragment(),
