@@ -130,6 +130,14 @@ public class Lesson implements Serializable {
                 return "13:35 - 15:10";
             case (5):
                 return "15:20 - 17:05";
+            case(6):
+                return "17:05 - 18:40";
+            case(7):
+                return "18:50 - 20:15";
+            case(8):
+                return "20:25 - 21:30";
+            case(9):
+                return "09:00 - 17:00";
             default:
                 return "не помню какая пара уже";
         }

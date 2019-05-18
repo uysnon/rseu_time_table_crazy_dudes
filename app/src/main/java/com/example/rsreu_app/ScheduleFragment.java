@@ -16,6 +16,7 @@ import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.rsreu_app.model.DoubleWeek;
 import com.example.rsreu_app.model.Week;
 
 import org.w3c.dom.Text;
@@ -31,8 +32,8 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
 
     private static final String DATE_KEY = "day_key";
     Button fullSchedule;
-    ViewPager pager;
-    Week mWeek;
+    MyPager pager;
+    DoubleWeek mDoubleWeek;
     Date mDate;
     Date mFirstDayOfSemester;
     boolean mIsFirstDayNumerator;
@@ -40,6 +41,7 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
     private LinearLayout mLayoutGoPrev;
     private LinearLayout mLayoutDatePicker;
     private TextView mTextViewDate;
+
     /**
      * Выбранный (текущий по умолчанию) день недели
      * Формат: пн-1, .. , вс-7
@@ -74,7 +76,7 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         Покачто данные взяты "с воздуха", далее должны быть заменены взтыми из бд
          */
         mIsFirstDayNumerator = true;
-        mFirstDayOfSemester = new Date(2019, 2, 11);
+        mFirstDayOfSemester = new Date(2019 - 1900, 1, 11);
         /*
          */
         fullSchedule.setOnClickListener(new View.OnClickListener() {
@@ -85,10 +87,10 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         });
         Log.d("SCHEDULE_FRAGMENT", "ОНКРЕАТЕ ВЬЮ");
 
-        mWeek = Week.createWeek(getActivity(), Week.isDateNumerator(mDate, mFirstDayOfSemester, mIsFirstDayNumerator));
-        if (mWeek != null) {
-            mPageAdapter = new MyPageAdapter(getFragmentManager(), mWeek);
-            pager.setAdapter(new MyPageAdapter(getFragmentManager(), mWeek));
+        mDoubleWeek = new DoubleWeek(Week.createWeek(getActivity(), true), Week.createWeek(getActivity(), false));
+        if (mDoubleWeek.getLongWeek() != null) {
+            mPageAdapter = new MyPageAdapter(getFragmentManager(), mDoubleWeek);
+            pager.setAdapter(new MyPageAdapter(getFragmentManager(), mDoubleWeek));
         }
 
 //        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -143,11 +145,11 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
                 datePicker.show(getActivity().getSupportFragmentManager(), "date picker");
             }
         });
+        mSimpleDateFormat = new SimpleDateFormat("dd.MM");
 
-
-        mSimpleDateFormat = new SimpleDateFormat("dd/MM");
+        pager.setPagingEnabled(false);
         updateDayOfWeek();
-        setTextViewDate();
+        updateTimeTable();
         return view;
     }
 
@@ -173,14 +175,16 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
      */
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        Log.d("DATE", year+" "+ month + " " + dayOfMonth);
+        Log.d("DATE", year + " " + month + " " + dayOfMonth);
         GregorianCalendar dateG = new GregorianCalendar(year, month, dayOfMonth);
         mDate = dateG.getTime();
         mCurrentDayOfWeek = gregorianDayOfWeekToRussian(dateG.get(dateG.DAY_OF_WEEK));
+        if (!Week.isDateNumerator(mDate, mFirstDayOfSemester, mIsFirstDayNumerator)) {
+            mCurrentDayOfWeek = mCurrentDayOfWeek + 7;
+        }
         Log.d("dataG", "dataG.get" + dateG.get(dateG.DAY_OF_WEEK));
         Log.d("dataG", "mCurrentDayOfWeek" + mCurrentDayOfWeek);
         updateTimeTable();
-        setTextViewDate();
 
 
     }
@@ -188,36 +192,41 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
     /**
      * Установление контента в TextView, содержащим информацию об отображаем в настоящее время дне
      */
-    private void setTextViewDate() {
+    private void updateTextViewDate() {
         mTextViewDate.setText(
                 mSimpleDateFormat.format(mDate) +
-                        Week.getNameDayFromItsNum(getActivity(), mCurrentDayOfWeek) +
-                        mWeek.getNameNumerator(getActivity())
-        );
+                        DoubleWeek.getNameDayFromItsNum(getActivity(), mCurrentDayOfWeek) +
+                        mDoubleWeek.getNameWeek(getActivity(), mCurrentDayOfWeek));
     }
 
     /**
      * Обновление содержимого таблицы с учетом установления новой даты;
      */
     private void updateTimeTable() {
-        if (mWeek.isNumerator() == Week.isDateNumerator(mDate, mFirstDayOfSemester, mIsFirstDayNumerator)) {
-            pager.setCurrentItem(mCurrentDayOfWeek - 1);
-        } else {
-            if (mWeek.isNumerator() == Week.isDateNumerator(mDate, mFirstDayOfSemester, mIsFirstDayNumerator)) {
-                mWeek = Week.createWeek(getActivity(), !mWeek.isNumerator());
-                mPageAdapter.setWeek(mWeek);
-                pager.setCurrentItem(mCurrentDayOfWeek - 1);
-            }
-        }
+        pager.setCurrentItem(mCurrentDayOfWeek - 1);
+        updateTextViewDate();
+//        if (mWeek.isNumerator() == Week.isDateNumerator(mDate, mFirstDayOfSemester, mIsFirstDayNumerator)) {
+//            pager.setCurrentItem(mCurrentDayOfWeek - 1);
+//            updateTextViewDate();
+//        } else {
+//                mWeek = Week.createWeek(getActivity(), !mWeek.isNumerator());
+//                mPageAdapter.setWeek(mWeek);
+//                pager.setCurrentItem(mCurrentDayOfWeek - 1);
+//                updateTextViewDate();
+//            }
     }
 
     private void updateDayOfWeek() {
         int year = Integer.valueOf((String) DateFormat.format("yyyy", mDate));
-        int month = Integer.valueOf((String)DateFormat.format("MM", mDate))-1;
-        int day = Integer.valueOf((String)DateFormat.format("dd", mDate));
+        int month = Integer.valueOf((String) DateFormat.format("MM", mDate)) - 1;
+        int day = Integer.valueOf((String) DateFormat.format("dd", mDate));
         GregorianCalendar dateG = new GregorianCalendar(year, month, day);
-        Log.d("DATE", "updaateDayOfWeek(): " + mDate.getYear() +" "+ mDate.getMonth() + " " + mDate.getDay());
+        Log.d("DATE", "updaateDayOfWeek(): " + mDate.getYear() + " " + mDate.getMonth() + " " + mDate.getDay());
         mCurrentDayOfWeek = gregorianDayOfWeekToRussian(dateG.get(dateG.DAY_OF_WEEK));
+        if (!Week.isDateNumerator(mDate, mFirstDayOfSemester, mIsFirstDayNumerator)) {
+            mCurrentDayOfWeek = mCurrentDayOfWeek + 7;
+        }
+        ;
     }
 
     /**
@@ -242,7 +251,6 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         c.add(Calendar.DATE, 1);
         mDate = c.getTime();
         updateDayOfWeek();
-        setTextViewDate();
         updateTimeTable();
     }
 
@@ -252,7 +260,6 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         c.add(Calendar.DATE, -1);
         mDate = c.getTime();
         updateDayOfWeek();
-        setTextViewDate();
         updateTimeTable();
     }
 

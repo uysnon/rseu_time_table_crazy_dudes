@@ -9,4 +9,14 @@
     <string name="sunday">Воскресенье</string>
     <string name="numerator">Числитель</string>
     <string name="denominator">Знаменатель</string>
+
+    <string name="monday_s">пн</string>
+    <string name="tuesday_s">вт</string>
+    <string name="wednesday_s">ср</string>
+    <string name="thursday_s">чт</string>
+    <string name="friday_s">пт</string>
+    <string name="saturday_s">сб</string>
+    <string name="sunday_s">вс</string>
+    <string name="numerator_s">числ.</string>
+    <string name="denominator_s">знам.</string>
 </resources>

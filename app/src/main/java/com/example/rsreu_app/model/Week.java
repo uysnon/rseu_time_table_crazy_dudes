@@ -3,6 +3,7 @@ package com.example.rsreu_app.model;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
+import android.text.format.DateFormat;
 import android.util.Log;
 
 import com.example.rsreu_app.DatabaseHelper;
@@ -64,13 +65,14 @@ public class Week implements Serializable {
         DatabaseHelper myDB;
         myDB = new DatabaseHelper(context);
         Week week = new Week();
+        int weekBool = numerator ? 1 : 0;
         week.setNumerator(numerator);
         for (int weekDay = 1; weekDay <= 7; weekDay++) {
             ArrayList<Lesson> lessons = new ArrayList<>();
             for (int timeId = 1; timeId <= 9; timeId++) {
                 Cursor c = null;
                 try {
-                    c = myDB.getInfo(weekDay, timeId, 0);
+                    c = myDB.getInfo(weekDay, timeId, weekBool);
                     int count = c.getCount();
                     c.moveToFirst();
                     String title = c.getString(c.getColumnIndex("title"));
@@ -122,11 +124,17 @@ public class Week implements Serializable {
      */
     public static boolean isDateNumerator(Date date, Date firstDateOfSemester, boolean isFirstWeekNumerator) {
         boolean result;
-        GregorianCalendar firstDateG = new GregorianCalendar(firstDateOfSemester.getYear(), firstDateOfSemester.getMonth(), firstDateOfSemester.getDay());
-        GregorianCalendar dateG = new GregorianCalendar(date.getYear(), firstDateOfSemester.getMonth(), date.getDay());
-        int weekFirst = firstDateG.get(firstDateG.WEEK_OF_MONTH);
-        int week = dateG.get(dateG.WEEK_OF_MONTH);
-        result = ((week - weekFirst % 2) == 1);
+        int year = Integer.valueOf((String) DateFormat.format("yyyy", date));
+        int month = Integer.valueOf((String) DateFormat.format("MM", date)) - 1;
+        int day = Integer.valueOf((String) DateFormat.format("dd", date));
+        int yearF = Integer.valueOf((String) DateFormat.format("yyyy", firstDateOfSemester));
+        int monthF = Integer.valueOf((String) DateFormat.format("MM", firstDateOfSemester)) - 1;
+        int dayF = Integer.valueOf((String) DateFormat.format("dd", firstDateOfSemester));
+        GregorianCalendar dateG = new GregorianCalendar(year, month, day);
+        GregorianCalendar firstDateG = new GregorianCalendar(yearF, monthF, dayF);
+        int weekFirst = firstDateG.get(firstDateG.WEEK_OF_YEAR);
+        int week = dateG.get(dateG.WEEK_OF_YEAR);
+        result = (((week - weekFirst) % 2) == 0);
         if (isFirstWeekNumerator) {
             return result;
         } else {
@@ -163,6 +171,34 @@ public class Week implements Serializable {
     }
 
     /**
+     * Получить название дня неделя по его номеру
+     *
+     * @param context контекст
+     * @param numDay  номер дня в недели (пн-1 .. вс-7)
+     * @return название дня недели
+     */
+    public static String getShortNameDayFromItsNum(Context context, int numDay) {
+        switch (numDay) {
+            case (1):
+                return context.getString(R.string.monday_s);
+            case (2):
+                return context.getString(R.string.tuesday_s);
+            case (3):
+                return context.getString(R.string.wednesday_s);
+            case (4):
+                return context.getString(R.string.thursday_s);
+            case (5):
+                return context.getString(R.string.friday_s);
+            case (6):
+                return context.getString(R.string.saturday_s);
+            case (7):
+                return context.getString(R.string.sunday_s);
+            default:
+                return "";
+        }
+    }
+
+    /**
      * Получение названия числителя/знаменателя из свойств объекта
      *
      * @param context контекст
@@ -171,6 +207,17 @@ public class Week implements Serializable {
     public String getNameNumerator(Context context) {
         if (this.isNumerator()) return context.getString(R.string.numerator);
         else return context.getString(R.string.denominator);
+    }
+
+    /**
+     * Получение названия числителя/знаменателя из свойств объекта
+     *
+     * @param context контекст
+     * @return название недели (числитель/знаменатель)
+     */
+    public String getShortNameNumerator(Context context) {
+        if (this.isNumerator()) return context.getString(R.string.numerator_s);
+        else return context.getString(R.string.denominator_s);
     }
 
     /**
