@@ -51,6 +51,53 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
     private ImageView mImageShareSchedule;
     private TextView mTextShareSchedule;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.d("lifecycle","onAttach");
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d("lifecycle","onCreate");
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d("lifecycle","onActivityCreated");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("lifecycle","onResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("lifecycle","onPause");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("lifecycle","onDestroyView");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("lifecycle","onDestroy");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d("lifecycle","onDetach");
+    }
 
     /**
      * Выбранный (текущий по умолчанию) день недели
@@ -74,6 +121,7 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d("lifecycle","onCreateView");
         View view = inflater.inflate(R.layout.fragment_schedule, container, false);
         mLayoutGoNext = view.findViewById(R.id.layoutGoNext);
         mLayoutGoPrev = view.findViewById(R.id.layoutGoPrevious);
