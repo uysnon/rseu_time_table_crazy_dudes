@@ -1,10 +1,12 @@
 package com.example.rsreu_app;
 
 import android.app.DatePickerDialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -69,6 +71,7 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         mTextViewDate = view.findViewById(R.id.text_date);
         fullSchedule = view.findViewById(R.id.fullSchedule);
         pager = view.findViewById(R.id.pager);
+
         mDate = new Date();
         /*
         Покачто данные взяты "с воздуха", далее должны быть заменены взтыми из бд
@@ -154,6 +157,7 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
     @Override
     public void onStart() {
         super.onStart();
+
     }
 
     @Override

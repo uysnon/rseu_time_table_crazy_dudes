@@ -64,13 +64,14 @@ public class Week implements Serializable {
         DatabaseHelper myDB;
         myDB = new DatabaseHelper(context);
         Week week = new Week();
+        int groupNumber = 543;
         week.setNumerator(numerator);
         for (int weekDay = 1; weekDay <= 7; weekDay++) {
             ArrayList<Lesson> lessons = new ArrayList<>();
             for (int timeId = 1; timeId <= 9; timeId++) {
                 Cursor c = null;
                 try {
-                    c = myDB.getInfo(weekDay, timeId, 0);
+                    c = myDB.getInfo(groupNumber,weekDay, timeId, 0);
                     int count = c.getCount();
                     c.moveToFirst();
                     String title = c.getString(c.getColumnIndex("title"));
