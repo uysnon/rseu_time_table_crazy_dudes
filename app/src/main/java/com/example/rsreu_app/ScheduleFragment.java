@@ -1,7 +1,9 @@
 package com.example.rsreu_app;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -94,8 +96,9 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
          */
 
         Log.d("SCHEDULE_FRAGMENT", "ОНКРЕАТЕ ВЬЮ");
-
-        mDoubleWeek = new DoubleWeek(Week.createWeek(getActivity(), true), Week.createWeek(getActivity(), false));
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SplashActivity.myPreference, Context.MODE_PRIVATE);
+        int group = Integer.valueOf(sharedPreferences.getString(MainActivity.groupKey, "0"));
+        mDoubleWeek = new DoubleWeek(Week.createWeek(getActivity(), true, group  ), Week.createWeek(getActivity(), false, group));
         if (mDoubleWeek.getLongWeek() != null) {
             mPageAdapter = new MyPageAdapter(getFragmentManager(), mDoubleWeek);
             pager.setAdapter(new MyPageAdapter(getFragmentManager(), mDoubleWeek));

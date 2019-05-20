@@ -61,7 +61,7 @@ public class Week implements Serializable {
      *                  false - знаменатель
      * @return объект Week
      */
-    public static Week createWeek(Context context, boolean numerator) {
+    public static Week createWeek(Context context, boolean numerator, int numGroup) {
         DatabaseHelper myDB;
         myDB = new DatabaseHelper(context);
         Week week = new Week();
@@ -72,7 +72,7 @@ public class Week implements Serializable {
             for (int timeId = 1; timeId <= 9; timeId++) {
                 Cursor c = null;
                 try {
-                    c = myDB.getInfo(weekDay, timeId, weekBool);
+                    c = myDB.getInfo(numGroup, weekDay, timeId, weekBool);
                     int count = c.getCount();
                     c.moveToFirst();
                     String title = c.getString(c.getColumnIndex("title"));

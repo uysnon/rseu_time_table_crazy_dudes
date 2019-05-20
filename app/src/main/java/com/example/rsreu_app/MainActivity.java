@@ -71,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         groupNumber = findViewById(R.id.groupNumber);
+        groupNumber.setFocusable(false);
+
         bell = findViewById(R.id.imageView2);
         notifSign = findViewById(R.id.upd);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -176,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
                  showAlertDialog();
             }
         });
+
 
         Toast.makeText(getApplicationContext(),sharedPreferences.getString(groupKey,null),Toast.LENGTH_SHORT).show();
 
@@ -339,6 +342,7 @@ public class MainActivity extends AppCompatActivity {
                             showAlertDialog();
                         }
                     }
+                    groupNumber.clearFocus();
 
             }
         });
@@ -348,6 +352,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     groupNumber.setText(sharedPreferences.getString(groupKey,null));
                     dialog.dismiss();
+                    groupNumber.clearFocus();
                 }
             });
         }
@@ -361,6 +366,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void jsonParse(String groupNumberUrl){
+        Log.d("UPDATE_SHARED_PR", "go to jsonParse");
 
         String url = "http://rsreu.ru/schedule/";
         url = url.concat(groupNumberUrl + ".json");
@@ -431,8 +437,9 @@ public class MainActivity extends AppCompatActivity {
                     myDB.close();
 
                     groupNumber.setText(groupNumberUrl);
+                    Log.d("UPDATE_SHARED_PR", "update group number in sp");
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString(groupKey,editTextValue);
+                    editor.putString(groupKey,groupNumberUrl);
                     editor.apply();
 
                 }catch (JSONException e){
