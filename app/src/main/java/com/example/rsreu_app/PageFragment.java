@@ -6,6 +6,7 @@ import android.database.CursorIndexOutOfBoundsException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,9 @@ import com.levitnudi.legacytableview.LegacyTableView;
 
 import java.util.ArrayList;
 
+import static com.levitnudi.legacytableview.LegacyTableView.CUSTOM;
 import static com.levitnudi.legacytableview.LegacyTableView.GOLDALINE;
+import static com.levitnudi.legacytableview.LegacyTableView.OCEAN;
 
 /**
  * PageFragmant отображает информацию по 1 дню,
@@ -79,8 +82,21 @@ public class PageFragment extends Fragment {
         mTableView.setTitle(LegacyTableView.readLegacyTitle());
         mTableView.setContent(LegacyTableView.readLegacyContent());
         mTableView.setHorizontalScrollBarEnabled(false);
-        mTableView.setTheme(GOLDALINE);
+        mTableView.setTheme(CUSTOM);
+        mTableView.setBackgroundEvenColor(getActivity().getString(R.string.colorDarkBlue));
+        mTableView.setContentFont(1);
+        mTableView.setBottomShadowColorTint(getActivity().getString(R.string.colorDarkBlue));
+        mTableView.setTitleFont(1);
+        mTableView.setContentTextSize(Integer.valueOf(getActivity().getString(R.string.size_table_content)));
+        mTableView.setTitleTextSize(Integer.valueOf(getActivity().getString(R.string.size_table_title)));
+        mTableView.setBackgroundOddColor("#536DFE");
+        mTableView.setBackgroundEvenColor("#536DFE");
+        mTableView.setHeaderBackgroundLinearGradientBOTTOM(getActivity().getString(R.string.colorLightBlue));
+        mTableView.setHeaderBackgroundLinearGradientTOP(getActivity().getString(R.string.colorLightBlue));
+        mTableView.setTitleTextColor(getActivity().getString(R.string.colorDarkBlue));
+        mTableView.setContentTextColor(getActivity().getString(R.string.colorDarkBlue));
         mTableView.build();
+
 
         return view;
     }

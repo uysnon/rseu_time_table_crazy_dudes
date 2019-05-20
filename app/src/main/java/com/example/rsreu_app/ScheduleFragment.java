@@ -1,29 +1,29 @@
 package com.example.rsreu_app;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
+import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.rsreu_app.model.Day;
 import com.example.rsreu_app.model.DoubleWeek;
+import com.example.rsreu_app.model.Lesson;
 import com.example.rsreu_app.model.Week;
 
-import org.w3c.dom.Text;
-
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -31,7 +31,7 @@ import java.util.GregorianCalendar;
 public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
 
     private static final String DATE_KEY = "day_key";
-    Button fullSchedule;
+
     MyPager pager;
     DoubleWeek mDoubleWeek;
     Date mDate;
@@ -41,6 +41,14 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
     private LinearLayout mLayoutGoPrev;
     private LinearLayout mLayoutDatePicker;
     private TextView mTextViewDate;
+    private ImageView mImageArrowRight;
+    private ImageView mImageArrowLeft;
+    private ImageView mImageCalendar;
+
+    private LinearLayout mLinearLayoutShareSchedule;
+    private ImageView mImageShareSchedule;
+    private TextView mTextShareSchedule;
+
 
     /**
      * Выбранный (текущий по умолчанию) день недели
@@ -69,7 +77,12 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         mLayoutGoPrev = view.findViewById(R.id.layoutGoPrevious);
         mLayoutDatePicker = view.findViewById(R.id.layout_datePicker);
         mTextViewDate = view.findViewById(R.id.text_date);
-        fullSchedule = view.findViewById(R.id.fullSchedule);
+        mImageArrowRight = view.findViewById(R.id.imageRightArrow);
+        mImageArrowLeft = view.findViewById(R.id.imageLeftArrow);
+        mImageCalendar = view.findViewById(R.id.imageCalendar);
+        mLinearLayoutShareSchedule = view.findViewById(R.id.layout_share_schedule);
+        mImageShareSchedule = view.findViewById(R.id.image_share_schedule);
+        mTextShareSchedule = view.findViewById(R.id.text_share_schedule);
         pager = view.findViewById(R.id.pager);
         mDate = new Date();
         /*
@@ -79,12 +92,7 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         mFirstDayOfSemester = new Date(2019 - 1900, 1, 11);
         /*
          */
-        fullSchedule.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
         Log.d("SCHEDULE_FRAGMENT", "ОНКРЕАТЕ ВЬЮ");
 
         mDoubleWeek = new DoubleWeek(Week.createWeek(getActivity(), true), Week.createWeek(getActivity(), false));
@@ -130,6 +138,23 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
             }
         });
 
+//        mLayoutGoNext.setOnTouchListener(new View.OnTouchListener(){
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                switch (event.getAction()) {
+//                    case MotionEvent.ACTION_DOWN: // нажатие
+//                        mLayoutGoNext.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorWhite));
+//                        mImageArrowRight.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_right_arrow_black));
+//                        break;
+//                    case MotionEvent.ACTION_UP: // отпускание
+//                    case MotionEvent.ACTION_CANCEL:
+//                        mLayoutGoNext.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorDarkBlue));
+//                        mImageArrowRight.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_right_arrow_white));
+//                        break;
+//                }
+//                return true;
+//            }
+//        });
         mLayoutGoPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,6 +168,50 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
                 DatePickerFragment datePicker = DatePickerFragment.newInstance(mDate);
                 datePicker.setTargetFragment(ScheduleFragment.this, 0);
                 datePicker.show(getActivity().getSupportFragmentManager(), "date picker");
+            }
+        });
+
+        mLinearLayoutShareSchedule.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mSharingIntent = new Intent(Intent.ACTION_SEND);
+                mSharingIntent.setType("text/plain");
+                Day currentDay = mDoubleWeek.getLongWeek().getDay(pager.getCurrentItem()+1);
+                String textSharing = getActivity().getString(R.string.message_date_schedule) + " " +
+                        mSimpleDateFormat.format(mDate)
+                        + " (" + mDoubleWeek.getShortNameDayFromItsNum(getActivity(), mCurrentDayOfWeek) + "): " + "\n";
+                for (int i = 0; i < currentDay.getLessons().size(); i++) {
+                    Lesson lesson = currentDay.getLessons().get(i);
+                    textSharing = textSharing + (i + 1)+ ") "
+                            + lesson.getTimeFromTimeId()+ " " +
+                            lesson.getTitle();
+
+                    if (!lesson.getRoom().equals("")) {
+                        textSharing = textSharing + " (" + lesson.getRoom() + ")" + "\n";
+                    } else {
+                        textSharing = textSharing + "\n";
+                    }
+                }
+                if (currentDay.getLessons().size() == 0) {
+                    textSharing = textSharing + getActivity().getString(R.string.message_no_lessons);
+                }
+                mSharingIntent.putExtra(Intent.EXTRA_TEXT, textSharing);
+                startActivity(Intent.createChooser(mSharingIntent, getActivity().getString(R.string.message_share_schedule)));
+            }
+        });
+
+        mLinearLayoutShareSchedule.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    mImageShareSchedule.setImageDrawable(v.getResources().getDrawable(R.drawable.ic_share_light_blue));
+                    mTextShareSchedule.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorLightBlue));
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP){
+                    mImageShareSchedule.setImageDrawable(v.getResources().getDrawable(R.drawable.ic_share_dark_blue));
+                    mTextShareSchedule.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorDarkBlue));
+                }
+                return false;
             }
         });
         mSimpleDateFormat = new SimpleDateFormat("dd.MM");
@@ -195,8 +264,10 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
     private void updateTextViewDate() {
         mTextViewDate.setText(
                 mSimpleDateFormat.format(mDate) +
-                        DoubleWeek.getNameDayFromItsNum(getActivity(), mCurrentDayOfWeek) +
-                        mDoubleWeek.getNameWeek(getActivity(), mCurrentDayOfWeek));
+                        " " +
+                        DoubleWeek.getShortNameDayFromItsNum(getActivity(), mCurrentDayOfWeek) +
+                        " " +
+                        mDoubleWeek.getShortNameWeek(getActivity(), mCurrentDayOfWeek));
     }
 
     /**

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="icon_width">20dp</dimen>
+    <dimen name="icon_height">20dp</dimen>
+    <dimen name="margin_s">5dp</dimen>
+    <string name="size_table_content">20</string>
+    <string name="size_table_title">25</string>
+</resources>

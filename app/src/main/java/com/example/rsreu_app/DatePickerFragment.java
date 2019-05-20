@@ -1,5 +1,6 @@
 package com.example.rsreu_app;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -32,12 +33,14 @@ public class DatePickerFragment extends DialogFragment {
         int year = Integer.valueOf((String)DateFormat.format("yyyy", mDate));
         int month = Integer.valueOf((String)DateFormat.format("MM", mDate))-1;
         int day = Integer.valueOf((String)DateFormat.format("dd", mDate));
-        return new DatePickerDialog(
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
                 getActivity(),
+                AlertDialog.THEME_DEVICE_DEFAULT_LIGHT,
                 (DatePickerDialog.OnDateSetListener)getTargetFragment(),
                 year,
                 month,
                 day
                 );
+        return  datePickerDialog;
     }
 }

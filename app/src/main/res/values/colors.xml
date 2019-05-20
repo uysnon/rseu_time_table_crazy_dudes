@@ -3,8 +3,13 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#009688</color>
-    <color name="colorWhile">#FFFFFF</color>
+    <color name="colorWhite">#FFFFFF</color>
     <color name="colorYellow">#FBC02D</color>
-    <color name="colorLightBlue">#0288D1</color>
-    <color name="colorDarkBlue">#512DA8</color>
+
+    <color name="colorLightBlue">#CDE5EF</color>
+    <string name="colorLightBlue">#CDE5EF</string>
+    <color name="colorDarkBlue">#4E708B</color>
+    <string name="colorDarkBlue">#4E708B</string>
+    <color name="colorGrey">#93A3AD</color>
+
 </resources>

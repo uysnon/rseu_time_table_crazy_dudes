@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Ассистент РГРТУ</string>
     <string name="group">Ваша группа</string>
+    <string name="message_set_date">Выберите дату.</string>
+    <string name="message_share_schedule">Поделиться расписанием</string>
+    <string name="message_date_schedule">Расписание на</string>
+    <string name="message_no_lessons">Нет занятий.</string>
+
 </resources>

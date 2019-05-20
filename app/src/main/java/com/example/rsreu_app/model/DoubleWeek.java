@@ -45,4 +45,20 @@ public class DoubleWeek {
         return Week.getNameDayFromItsNum(context, num);
     }
 
+
+    public String getShortNameWeek(Context context, int day) {
+        if (day <= 7) {
+            return mNumerator.getShortNameNumerator(context);
+        } else {
+            return mDenominator.getShortNameNumerator(context);
+        }
+    }
+
+    public static String getShortNameDayFromItsNum(Context context, int num) {
+        if (num > 7) {
+            num = num - 7;
+        }
+        return Week.getShortNameDayFromItsNum(context, num);
+    }
+
 }
