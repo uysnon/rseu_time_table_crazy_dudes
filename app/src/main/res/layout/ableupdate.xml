@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="300dp"
+    android:layout_height="120dp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="300dp"
+        android:layout_height="35dp">
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_marginStart="5dp"
+            android:layout_height="35dp"
+            android:src="@drawable/info"/>
+
+        <TextView
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Расписание изменилось!"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Расписание Вашей группы было изменено"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="на актуальное."/>
+
+    <Button
+        android:id="@+id/changed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ок"/>
+
+
+</LinearLayout>

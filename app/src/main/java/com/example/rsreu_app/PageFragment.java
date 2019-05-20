@@ -25,7 +25,7 @@ import static com.levitnudi.legacytableview.LegacyTableView.GOLDALINE;
 import static com.levitnudi.legacytableview.LegacyTableView.OCEAN;
 
 /**
- * PageFragmant отображает информацию по 1 дню,
+ * PageFragment отображает информацию по 1 дню,
  * как правило вызов происходит из MyPageAdapter,
  * в котором хранится неделя
  */
@@ -105,7 +105,8 @@ public class PageFragment extends Fragment {
     private String getAnyColumnValueExample(Context context, int weekDay, int timeId, int weekBool, String columnYouWant) {
         DatabaseHelper myDB;
         myDB = new DatabaseHelper(context);
-        Cursor c = myDB.getInfo(weekDay, timeId, weekBool);
+        int groupNumber = 543;
+        Cursor c = myDB.getInfo(groupNumber,weekDay, timeId, weekBool);
         return c.getString(c.getColumnIndex("title"));  // columnYouWant вместо title
     }
 
