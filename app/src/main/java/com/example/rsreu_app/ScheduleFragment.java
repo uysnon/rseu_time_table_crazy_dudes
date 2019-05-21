@@ -225,15 +225,6 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
 
     /**
      * Метод, вызываемый при выборе даты в DatePickerFragment-e.

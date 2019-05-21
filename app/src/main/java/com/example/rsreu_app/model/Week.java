@@ -74,9 +74,12 @@ public class Week implements Serializable {
                 try {
                     c = myDB.getInfo(numGroup, weekDay, timeId, weekBool);
                     int count = c.getCount();
+                    Log.e("ERROR_WEEK", "ERROR_GO");
+                    if (count == 0 ) {
+                        Log.e("ERROR_WEEK", "ERROR_WEEK :(");
+                    }
                     c.moveToFirst();
                     String title = c.getString(c.getColumnIndex("title"));
-                    Log.e("ERROR_WEEK", "ERROR_WEEK  title");
                     String type = c.getString(c.getColumnIndex("type"));
                     boolean optional = (1 == c.getInt(c.getColumnIndex("optional")));
                     ArrayList<String> teachers = new ArrayList<>();
@@ -99,7 +102,7 @@ public class Week implements Serializable {
                     Log.d("myLog", "day_" + weekDay + " timeId_" + timeId + " title_" + title);
                     lessons.add(lesson);
                 } catch (CursorIndexOutOfBoundsException e) {
-                    Log.e("ERROR_WEEK", "ERROR_WEEK :(");
+
                 } finally {
                     c.close();
                 }

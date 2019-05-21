@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ThemedSpinnerAdapter;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -205,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new SettingsFragment();
                     break;
             }
-
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     selectedFragment).commit();
 
@@ -245,9 +245,7 @@ public class MainActivity extends AppCompatActivity {
             /*                    SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
                                 editor.putString(groupKey, editTextValue);
                                 editor.apply();*/
-                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                                        ScheduleFragment.newInstance()).commit();
-                                bottomNavigationView.setSelectedItemId(R.id.nav_schedule);
+
                             }else{
                                 Toast.makeText(getApplicationContext(), "Необходим Интернет для первого запуска приложения", Toast.LENGTH_SHORT).show();
                                 showAlertDialog();
@@ -258,9 +256,7 @@ public class MainActivity extends AppCompatActivity {
                                 c = myDB.getGroupCreateTime(Integer.parseInt(editTextValue));
                                     if(System.currentTimeMillis()  < (c.getLong(c.getColumnIndex("date")) + 4924800000L)){
                                          // оставляем старое расписание
-                                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                                                ScheduleFragment.newInstance()).commit();
-                                        bottomNavigationView.setSelectedItemId(R.id.nav_schedule);
+
                                     }else{
                                         if(isNetworkAvailable()){
                                             myDB.deleteGroup(Integer.parseInt(editTextValue));
@@ -269,9 +265,7 @@ public class MainActivity extends AppCompatActivity {
          /*                                   SharedPreferences.Editor editor = getSharedPreferences(myPreference, Context.MODE_PRIVATE).edit();
                                             editor.putString(groupKey, editTextValue);
                                             editor.apply();*/
-                                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                                                    ScheduleFragment.newInstance()).commit();
-                                            bottomNavigationView.setSelectedItemId(R.id.nav_schedule);
+
                                         }else{
                                             AlertDialog.Builder updateDialog = new AlertDialog.Builder(MainActivity.this);
                                             updateDialog.setTitle("Группа");
@@ -288,9 +282,7 @@ public class MainActivity extends AppCompatActivity {
                                                         SharedPreferences.Editor editor = getSharedPreferences(myPreference, Context.MODE_PRIVATE).edit();
                                                         editor.putString(groupKey, editTextValue);
                                                         editor.apply();
-                                                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                                                                ScheduleFragment.newInstance()).commit();
-                                                        bottomNavigationView.setSelectedItemId(R.id.nav_schedule);
+
                                                     } else{
                                                         Toast.makeText(getApplicationContext(),"Все же необходим Интернет для обновления информации",Toast.LENGTH_SHORT).show();
                                                         showAlertDialog();
@@ -318,8 +310,7 @@ public class MainActivity extends AppCompatActivity {
                                    /* SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
                                     editor.putString(groupKey, editTextValue);
                                     editor.apply();*/
-                                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                                            ScheduleFragment.newInstance()).commit();
+
 
                                 }else{
                                     Toast.makeText(getApplicationContext(),"Необходим Интернет или вернитесь назад",Toast.LENGTH_SHORT).show();
@@ -343,8 +334,24 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                     groupNumber.clearFocus();
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+//                        ScheduleFragment.newInstance()).commit();
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        bottomNavigationView.setSelectedItemId(R.id.nav_schedule);
+                        return;
+                    }
+                    };
+                runnable.run();
 
-            }
+                }
+
         });
         if (!isFirstLaunch){
             alertDialog.setNegativeButton("Назад", new DialogInterface.OnClickListener() {
