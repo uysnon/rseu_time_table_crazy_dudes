@@ -34,6 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.GenericArrayType;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -57,19 +58,18 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         myDB = new DatabaseHelper(getApplicationContext());
+        sharedPreferences = getSharedPreferences(myPreference, Context.MODE_PRIVATE);
         ImageView appImage;
         TextView appName;
+
+
 
         appImage = findViewById(R.id.imageView);
         appName = findViewById(R.id.appName);
 
-        /*
-        * Загружаем анимацию из xml-файла и запускаем
-        */
         Animation animationTransition = AnimationUtils.loadAnimation(this,R.anim.transition);
         appImage.startAnimation(animationTransition);
         appName.startAnimation(animationTransition);
-
 
         mHandler = new Handler(Looper.getMainLooper()){
             @Override
@@ -87,123 +87,162 @@ public class SplashActivity extends AppCompatActivity {
             }
         };
 
-        sharedPreferences = getSharedPreferences(myPreference, Context.MODE_PRIVATE);
         hasEndTime = sharedPreferences.contains("endTime");
+
+        Cursor c;
+        SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
+
+        try{
+            c = myDB.getAllDataGroups();
+            int count = c.getCount();
+            c.close();
+            if (count == 0) {
+                editor.putBoolean("hasGroup", false);
+                editor.putBoolean("isFirstLaunch", true);
+                editor.apply();
+            }else{
+                editor.putBoolean("hasGroup",true);
+                editor.putBoolean("isFirstLaunch",false);
+                editor.apply();
+            }
+
+        }catch (NullPointerException e){
+            e.printStackTrace();
+
+        }
+
 
 
         Intent intent = new Intent(this,MainActivity.class);
         Thread timer = new Thread(){
             public void run(){
 
+                boolean hasGroup, isFirstLaunch;
+
                 if(isNetworkAvailable()){
-                  myDB.deleteNews();
-                  mQueue = Volley.newRequestQueue(getApplicationContext());
-                  Log.d("Connection","here");
-                  jsonParseNews();
+                    myDB.deleteNews();
+                    mQueue = Volley.newRequestQueue(getApplicationContext());
+                    jsonParseNews();
                 }
 
-                try{
-                    if (!hasEndTime && !sharedPreferences.contains("isFirstLaunch")){
+                hasGroup = sharedPreferences.getBoolean("hasGroup",false);
+                isFirstLaunch = sharedPreferences.getBoolean("isFirstLaunch",false);
+
+                try {
+                    Log.d("hasGroup: ",Boolean.toString(hasGroup));
+                    Log.d("isFirstLaunch: ",Boolean.toString(isFirstLaunch));
+
+                    if(!hasGroup && isFirstLaunch){
                         if(isNetworkAvailable()){
                             mQueue = Volley.newRequestQueue(getApplicationContext());
                             jsonParseTimes();
                             mQueue = Volley.newRequestQueue(getApplicationContext());
                             jsonParseSemester();
-                            SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
-                            editor.putBoolean("isLaunched", true);
-                            editor.apply();
-
                         }else{
                             Message message = mHandler.obtainMessage(1);
                             message.sendToTarget();
-
                         }
-                    }else if(hasEndTime || sharedPreferences.contains("isFirstLaunch") || sharedPreferences.contains("isLaunched")){
-                        // сравнить текущую дату и дату окончания семестра
-                        Log.d("secretLogs","here");
-                        Cursor c = null;
-                        myDB = new DatabaseHelper(getApplicationContext());
+                    }else if(hasGroup && !isFirstLaunch){
+                        Log.d("myLogs2","HERE");
+                        Cursor c;
                         try{
                             c = myDB.getAllDataSemester();
-                            c.moveToFirst();
+                            c.moveToLast();
                             endDate = c.getString(c.getColumnIndex("endDate"));
+                            Log.d("myLogs2","HERE2 " + endDate + c.getCount());
+                            c.close();
                             SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
                             try{
-                              Date date = sdf.parse(endDate);
-                              long mills = date.getTime();
                                 SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
+                                Date date = sdf.parse(endDate);
+                                long mills = date.getTime();
+                                Log.d("myLogs2FirstData",String.valueOf(mills));
                                 editor.putLong("endTime", mills);
                                 editor.apply();
-
                             }catch (ParseException e){
                                 e.printStackTrace();
                             }
-                        }catch (CursorIndexOutOfBoundsException e){
+
+                        }catch (NullPointerException e){
                             e.printStackTrace();
-                        }finally {
-                            c.close();
                         }
 
                         long currentDate = System.currentTimeMillis();
                         long endDateLong = sharedPreferences.getLong("endTime",0);
-                        Log.d("secretLogs",Long.toString(currentDate));
-                        Log.d("secretLogs",Long.toString(endDateLong));
+                        long halfOfSemester = endDateLong - 4665600000L;
 
-                        if(currentDate > endDateLong){  // and updateIsDone(чтобы обновилось, можно поместить в колокольчик)
-                            if (isNetworkAvailable()){
-                                // пока на сервере все еще старая информация...попробуйте позднее..можно в колокольчк это перенести
-                                //можно сделать преференсез updateIsRequired()
-                                myDB.deleteTimes();
-                                myDB.deleteSettings();
+                        if(currentDate > endDateLong){
+                            Log.d("myLogs2","HERE3") ;
+
+                            if(currentDate > halfOfSemester){
+                                editor.putBoolean("halfOfSemester",true);
+                                editor.apply();
+                                Log.d("myLogs2","HERE4") ;
+                            }
+
+                            if(isNetworkAvailable()){
                                 mQueue = Volley.newRequestQueue(getApplicationContext());
+                                try{
+                                    c = myDB.getAllDataTimes();
+                                    Log.d("myLogs2","here 4.5 " + c.getCount());
+                                    c.close();
+                                }catch (NullPointerException e){
+                                    e.printStackTrace();
+                                }
                                 jsonParseTimes();
                                 mQueue = Volley.newRequestQueue(getApplicationContext());
                                 jsonParseSemester();
-                                try{
-                                    c = myDB.getAllDataSemester();
-                                    c.moveToFirst();
-                                    endDate = c.getString(c.getColumnIndex("endDate"));
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-                                    try{
-                                        Date date = sdf.parse(endDate);
-                                        long mills = date.getTime();
 
-                                        if(mills == endDateLong){ //все еще старая инфа на сервере хранится
-                                            SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
-                                            editor.putBoolean("oldDataFound", true);
-                                            editor.apply();
-                                        }else{
-                                            myDB.deleteGroups();
-                                            SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
-                                            editor.putBoolean("oldDataFound", false);
-                                            editor.putLong("endTime", mills);
-                                            editor.putBoolean("ableToUpdate", true); //можем обновить, новая инфа на сервере
-                                            editor.apply();
-                                        }
+                                Log.d("myLogs2","HERE5") ;
 
-                                    }catch (ParseException e){
-                                        e.printStackTrace();
-                                    }
-                                }catch (CursorIndexOutOfBoundsException e){
-                                    e.printStackTrace();
-                                }finally {
-                                    c.close();
-                                }
+                              try{
+                                  c = myDB.getAllDataSemester();
+                                  c.moveToLast();
+                                  endDate = c.getString(c.getColumnIndex("endDate"));
+                                  c.close();
+                                  SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+                                  try {
+                                      Date date = sdf.parse(endDate);
+                                      long mills = date.getTime();
+
+
+
+                                      long oldDate = sharedPreferences.getLong("endDate",0);
+                                      Log.d("myLogs2Old",String.valueOf(oldDate));
+                                      Log.d("myLogs2Mills",String.valueOf(mills));
+                                      if(mills == oldDate){
+                                          SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
+                                          editor.putBoolean("oldDataFound", true);
+
+                                          Log.d("myLogs2","HERE6") ;
+                                          editor.apply();
+                                      }else{
+                                          editor.putBoolean("ableToUpdate",true);
+                                          editor.putLong("endDate",mills);
+                                          editor.apply();
+                                      }
+                                  }catch (ParseException e){
+                                      e.printStackTrace();
+                                  }
+                              }catch (NullPointerException e){
+                                  e.printStackTrace();
+                              }
                             }else{
-                                //поместить в преференсез значение и в мейнактивити вывести диалог, что нужно обновить информацию
-                                SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
                                 editor.putBoolean("isUpdateRequired",true);
-                                Log.d("secretLogs","isUpdate");
                                 editor.apply();
-                                startActivity(intent);
+
+
                             }
+
                         }
+
 
                     }
 
                     sleep(1500);
 
-                    if(!isNetworkAvailable()){
+                    if(!isNetworkAvailable() && sharedPreferences.getBoolean("isFirstLaunch",false)){
+                        Log.d("myLogs2","her");
                         finish();
                     } else{
                         startActivity(intent);
@@ -211,36 +250,42 @@ public class SplashActivity extends AppCompatActivity {
                     }
 
 
+
                 }catch (InterruptedException e){
-
                     e.printStackTrace();
-
                 }
+
             }
 
         };
 
         timer.start();
 
-
-
-
     }
 
 
     public void jsonParseTimes(){
-        String url = "http://rsreu.ru/schedule/times.json";;
+        String url = "http://rsreu.ru/schedule/times.json";
+        myDB = new DatabaseHelper(getApplicationContext());
+        try{
+        Cursor c = myDB.getAllDataTimes();
+            myDB.deleteTimes();
+            c.close();
+        }catch (NullPointerException e){
+
+        }
+
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try{
+
+                    myDB = new DatabaseHelper(getApplicationContext());
                     JSONArray jsonArrayTimes = response.getJSONArray("times");
 
                     int lessonNumber;
                     String fromTime, toTime;
                     boolean isInserted;
-
-                    myDB = new DatabaseHelper(getApplicationContext());
 
                     for(int i = 0; i < jsonArrayTimes.length(); i++) {
                         JSONObject time = jsonArrayTimes.getJSONObject(i);
@@ -249,9 +294,49 @@ public class SplashActivity extends AppCompatActivity {
                         toTime = time.getString("to");
 
                         isInserted = myDB.insertDataTimes(lessonNumber,fromTime,toTime);
+                        Log.d("times", String.valueOf(isInserted) + i);
 
-                        Log.d("myLogs",String.valueOf(isInserted + Integer.toString(i)));
                     }
+
+                    myDB.close();
+
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                mQueue.stop();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+
+        mQueue.add(request);
+
+    }
+
+
+    public void jsonParseSemester(){
+        String url = "http://rsreu.ru/schedule/settings.json";
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try{
+                    String startDate, endDate;
+                    boolean isNumerator, isInserted;
+                    int isNumeratorInt;
+                    myDB = new DatabaseHelper(getApplicationContext());
+
+                    startDate = response.getString("startDate");
+                    endDate = response.getString("endDate");
+                    isNumerator = response.getBoolean("isNumerator");
+
+                    isNumeratorInt = (isNumerator) ? 1 : 0;
+
+                    isInserted = myDB.insertDataSemester(startDate,endDate,isNumeratorInt);
+                    Log.d("semester", String.valueOf(isInserted));
 
                     myDB.close();
 
@@ -270,44 +355,8 @@ public class SplashActivity extends AppCompatActivity {
         });
 
         mQueue.add(request);
-    }
 
 
-    public void jsonParseSemester(){
-        String url = "http://rsreu.ru/schedule/settings.json";
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try{
-                    String startDate, endDate;
-                    Boolean isNumerator, isInserted;
-                    int isNumeratorInt;
-
-                    myDB = new DatabaseHelper(getApplicationContext());
-
-                    startDate = response.getString("startDate");
-                    endDate = response.getString("endDate");
-                    isNumerator = response.getBoolean("isNumerator");
-
-                    isNumeratorInt = (isNumerator) ? 1 : 0;
-
-                    isInserted = myDB.insertDataSemester(startDate,endDate,isNumeratorInt);
-
-                    Log.d("myLogs",String.valueOf(isInserted));
-
-
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-                mQueue.stop();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        });
-
-        mQueue.add(request);
     }
 
 
@@ -324,15 +373,16 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 try{
-                    Log.d("myLogs","here11");
+
+                    myDB = new DatabaseHelper(getApplicationContext());
                     JSONArray jsonArrayItems = response.getJSONArray("items");
+
+                    boolean isInserted;
 
                     String urlNews, title, summary, author, date;
                     Bitmap img = BitmapFactory.decodeResource(getApplicationContext().getResources(),
-                            R.drawable.logomin); //
+                            R.drawable.logomin);
                     DbBitmapUtility dbBitmapUtility = new DbBitmapUtility();
-                    boolean isInserted = false;
-                    myDB = new DatabaseHelper(getApplicationContext());
                     for(int i = 0; i < jsonArrayItems.length(); i++) {
                         JSONObject item = jsonArrayItems.getJSONObject(i);
                         urlNews = item.getString("url");
@@ -340,18 +390,16 @@ public class SplashActivity extends AppCompatActivity {
                         summary = item.getString("summary");
                         author = item.getJSONObject("author").getString("name");
                         date = item.getString("date_published");
-                        Log.d("SecretLogs",date);
-
                         try {
-                            isInserted = myDB.insertNews(urlNews, title, summary, author, date, dbBitmapUtility.getBytes(img));
-                        }catch (Exception e){
+                           isInserted =  myDB.insertNews(urlNews, title, summary, author, date, dbBitmapUtility.getBytes(img));
+                           Log.d("news", String.valueOf(isInserted) + i);
+                        }catch (IOException e){
                             e.printStackTrace();
                         }
-                        Log.d("mySecLogs",isInserted + "!" + i);
+
                     }
 
                     myDB.close();
-
 
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -362,11 +410,12 @@ public class SplashActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("myLogs","error");
             }
         });
 
         mQueue.add(request);
+
+
     }
 
 

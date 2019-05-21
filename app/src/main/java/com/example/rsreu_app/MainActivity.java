@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         groupNumber = findViewById(R.id.groupNumber);
-        groupNumber.setFocusable(false);
 
         bell = findViewById(R.id.imageView2);
         notifSign = findViewById(R.id.upd);
@@ -84,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         linearLayout2.setOrientation(LinearLayout.VERTICAL);
 
         hasGroup = sharedPreferences.contains("groupKey");
+
+        Log.d("myLogs3",String.valueOf(hasGroup));
 
         oldDataFound = sharedPreferences.getBoolean("oldDataFound",false);
         ableToUpdate = sharedPreferences.getBoolean("ableToUpdate",false);
@@ -108,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         if(ableToUpdate){
+            mQueue = Volley.newRequestQueue(getApplicationContext());
             jsonParse(sharedPreferences.getString("groupKey",null));
             notifSign.setVisibility(View.VISIBLE);
             bell.bringToFront();
@@ -162,14 +164,12 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-
         if(!hasGroup){
-            SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
-            editor.putBoolean("isFirstLaunch",true);
-            editor.apply();
             showAlertDialog();
+            Log.d("myLogs3FirstLaunch",String.valueOf(sharedPreferences.getBoolean("isFirstLaunch",false)));
         }else{
             groupNumber.setText(sharedPreferences.getString(groupKey,null));
+            Log.d("myLogs3FirstLaunch","HEERR");
         }
 
         groupNumber.setOnClickListener(new View.OnClickListener() {
@@ -178,9 +178,6 @@ public class MainActivity extends AppCompatActivity {
                  showAlertDialog();
             }
         });
-
-
-        Toast.makeText(getApplicationContext(),sharedPreferences.getString(groupKey,null),Toast.LENGTH_SHORT).show();
 
         //Можно вынести в метод работу с BottomNavigationView
 
@@ -225,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(myPreference, Context.MODE_PRIVATE);
 
         isFirstLaunch = sharedPreferences.getBoolean("isFirstLaunch",false);
+        Log.d("myLogs3",String.valueOf(sharedPreferences.getBoolean("isFirstLaunch",false)));
 
         if (isFirstLaunch) {
             alertDialog.setCancelable(false);
@@ -241,28 +239,40 @@ public class MainActivity extends AppCompatActivity {
                             if(isNetworkAvailable()) {
                                 mQueue = Volley.newRequestQueue(getApplicationContext());
                                 jsonParse(editTextValue);
-                                sharedPreferences.edit().putBoolean("isFirstLaunch", false).apply();
+                                //sharedPreferences.edit().putBoolean("isFirstLaunch", false).apply();
             /*                    SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
                                 editor.putString(groupKey, editTextValue);
                                 editor.apply();*/
+                                Log.d("myLogs3","HERE1");
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                                         ScheduleFragment.newInstance()).commit();
                                 bottomNavigationView.setSelectedItemId(R.id.nav_schedule);
                             }else{
                                 Toast.makeText(getApplicationContext(), "Необходим Интернет для первого запуска приложения", Toast.LENGTH_SHORT).show();
+                                Log.d("myLogs3","HERE4");
                                 showAlertDialog();
                             }
                         }else{
                             Cursor c;
                             try{
                                 c = myDB.getGroupCreateTime(Integer.parseInt(editTextValue));
-                                    if(System.currentTimeMillis()  < (c.getLong(c.getColumnIndex("date")) + 4924800000L)){
-                                         // оставляем старое расписание
+
+                                Log.d("myLogs3", String.valueOf(c.getCount()));
+
+                                if(c.getCount() == 0){
+                                    Log.d("myLogs3","HEREyes");
+                                    mQueue = Volley.newRequestQueue(getApplicationContext());
+                                    jsonParse(editTextValue);
+                                }else {
+                                    if (((sharedPreferences.getLong("endTime",0) - 4665600000L) - System.currentTimeMillis()) > 0){
+                                        // оставляем старое расписание
+                                        Log.d("myLogs3","HEREOLD");
                                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                                                 ScheduleFragment.newInstance()).commit();
                                         bottomNavigationView.setSelectedItemId(R.id.nav_schedule);
-                                    }else{
-                                        if(isNetworkAvailable()){
+                                    } else {
+                                        if (isNetworkAvailable()) {
+                                            Log.d("myLogs3","HEREREEE");
                                             myDB.deleteGroup(Integer.parseInt(editTextValue));
                                             mQueue = Volley.newRequestQueue(getApplicationContext());
                                             jsonParse(editTextValue);
@@ -272,11 +282,12 @@ public class MainActivity extends AppCompatActivity {
                                             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                                                     ScheduleFragment.newInstance()).commit();
                                             bottomNavigationView.setSelectedItemId(R.id.nav_schedule);
-                                        }else{
+                                        } else {
+                                            Log.d("myLogs3","HEREDialog");
                                             AlertDialog.Builder updateDialog = new AlertDialog.Builder(MainActivity.this);
                                             updateDialog.setTitle("Группа");
                                             updateDialog.setIcon(R.drawable.ic_users);
-                                            updateDialog.setMessage("Вы уже вводили данную группу ранее, но инфо о ней слишком стара. Нужен Интернет. Обновить?");
+                                            updateDialog.setMessage("Вы уже вводили данную группу ранее, но инфо о ней устарела. Нужен Интернет. Обновить?");
                                             updateDialog.setCancelable(false);
                                             updateDialog.setPositiveButton("Да", new DialogInterface.OnClickListener() {
                                                 @Override
@@ -285,14 +296,14 @@ public class MainActivity extends AppCompatActivity {
                                                         myDB.deleteGroup(Integer.parseInt(editTextValue));
                                                         mQueue = Volley.newRequestQueue(getApplicationContext());
                                                         jsonParse(editTextValue);
-                                                        SharedPreferences.Editor editor = getSharedPreferences(myPreference, Context.MODE_PRIVATE).edit();
+                                                     /*   SharedPreferences.Editor editor = getSharedPreferences(myPreference, Context.MODE_PRIVATE).edit();
                                                         editor.putString(groupKey, editTextValue);
-                                                        editor.apply();
+                                                        editor.apply();*/
                                                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                                                                 ScheduleFragment.newInstance()).commit();
                                                         bottomNavigationView.setSelectedItemId(R.id.nav_schedule);
-                                                    } else{
-                                                        Toast.makeText(getApplicationContext(),"Все же необходим Интернет для обновления информации",Toast.LENGTH_SHORT).show();
+                                                    } else {
+                                                        Toast.makeText(getApplicationContext(), "Все же необходим Интернет для обновления информации. ", Toast.LENGTH_SHORT).show();
                                                         showAlertDialog();
                                                     }
                                                 }
@@ -309,10 +320,14 @@ public class MainActivity extends AppCompatActivity {
                                             upDialog.show();
                                         }
                                     }
-
+                                }
 
                             }catch (NullPointerException e){
+
+
+                                Log.d("myLogs3","here11");
                                 if(isNetworkAvailable()) {
+                                    Log.d("myLogs3","HERE10");
                                     mQueue = Volley.newRequestQueue(getApplicationContext());
                                     jsonParse(editTextValue);
                                    /* SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
@@ -366,8 +381,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void jsonParse(String groupNumberUrl){
-        Log.d("UPDATE_SHARED_PR", "go to jsonParse");
-
         String url = "http://rsreu.ru/schedule/";
         url = url.concat(groupNumberUrl + ".json");
 
@@ -438,7 +451,12 @@ public class MainActivity extends AppCompatActivity {
 
                     groupNumber.setText(groupNumberUrl);
                     Log.d("UPDATE_SHARED_PR", "update group number in sp");
+
                     SharedPreferences.Editor editor = sharedPreferences.edit();
+                    if (sharedPreferences.getBoolean("isFirstLaunch",false)){
+                        editor.putBoolean("isFirstLaunch",false);
+                        Log.d("myLogs3","HERE2");
+                    }
                     editor.putString(groupKey,groupNumberUrl);
                     editor.apply();
 
@@ -453,12 +471,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getApplicationContext(),"Сервер временно недоступен или группа не найдена",Toast.LENGTH_SHORT).show();
-                if(sharedPreferences.contains(groupKey) && !(sharedPreferences.getString(groupKey,null) == "")){
+                if(sharedPreferences.contains(groupKey) && !(sharedPreferences.getString(groupKey,null).equals(""))){
                     groupNumber.setText(sharedPreferences.getString(groupKey, ""));
+                    Log.d("myLogs3","HERE6");
                 } else{
+
+                    Log.d("myLogs3","HERE5");
                     groupNumber.setText("");
                 }
                 error.printStackTrace();
+               // if(!(sharedPreferences.getBoolean("oldDataFound",false)) || !(sharedPreferences.getBoolean("oldDataFound",false)))
                 showAlertDialog();
             }
         });
@@ -474,17 +496,6 @@ public class MainActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 
-    private void enableMobileData(Context context, boolean enabled) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        final ConnectivityManager cm = (ConnectivityManager)  context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        final Class conmanClass = Class.forName(cm.getClass().getName());
-        final Field connectivityManagerField = conmanClass.getDeclaredField("mService");
-        connectivityManagerField.setAccessible(true);
-        final Object connectivityManager = connectivityManagerField.get(cm);
-        final Class connectivityManagerClass =  Class.forName(connectivityManager.getClass().getName());
-        final Method setMobileDataEnabledMethod = connectivityManagerClass.getDeclaredMethod("setMobileDataEnabled", Boolean.TYPE);
-        setMobileDataEnabledMethod.setAccessible(true);
 
-        setMobileDataEnabledMethod.invoke(connectivityManager, enabled);
-    }
 
 }

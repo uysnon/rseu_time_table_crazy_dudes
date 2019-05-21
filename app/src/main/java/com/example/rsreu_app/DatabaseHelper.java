@@ -179,10 +179,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-
-
-
-
     public boolean updateData(int id,int groupNumber,int weekDay, int timeId, int duration, int optional, String title, String type,String teachers, String room, String build, String dates, int weekBool) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -228,7 +224,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("delete from " + TABLE_NAME_TIMES);
     }
 
-    public void deleteSettings(){
+    public void deleteSemester(){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from " + TABLE_NAME_SEMESTER);
     }
