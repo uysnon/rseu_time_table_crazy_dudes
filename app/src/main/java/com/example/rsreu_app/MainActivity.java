@@ -2,6 +2,7 @@ package com.example.rsreu_app;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
@@ -24,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -91,18 +93,77 @@ public class MainActivity extends AppCompatActivity {
         updateIsRequired = sharedPreferences.getBoolean("updateIsRequired",false);
 
 
+        Log.d("myLogs3Bool",String.valueOf(oldDataFound));
+        Log.d("myLogs3Bool",String.valueOf(ableToUpdate));
+        Log.d("myLogs3Bool",String.valueOf(updateIsRequired));
+
+
+        if(oldDataFound){
+            ableToUpdate = !ableToUpdate;
+        }
+
+        if(ableToUpdate){
+            oldDataFound = !oldDataFound;
+        }
+
+        Context context = getApplicationContext();
+
+        Log.d("myLogs3BoolNew",String.valueOf(oldDataFound));
+        Log.d("myLogs3BoolNew",String.valueOf(ableToUpdate));
+        Log.d("myLogs3BoolNew",String.valueOf(updateIsRequired));
 
         if(oldDataFound){
             notifSign.setVisibility(View.VISIBLE);
-            bell.bringToFront();
             bell.setClickable(true);
             bell.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //inflater.inflate
-                    notifSign.setVisibility(View.INVISIBLE);
-                    //пока на сервере все еще прошлая информация
-                    // пусть висит пока не измениться на ableToUpdate
+                    LinearLayout ll;
+                    ll = findViewById(R.id.ll);
+                    ll.setVisibility(View.VISIBLE);
+                    LayoutInflater layoutInflater = getLayoutInflater();
+                    View mView = layoutInflater.inflate(R.layout.old_data,null,false);
+                    ll.addView(mView);
+                    ll.bringToFront();
+
+                    /*AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                    mBuilder.setCancelable(true);
+                    View mView = getLayoutInflater().inflate(R.layout.old_data,null);
+                    CheckBox checkBox = mView.findViewById(R.id.oldCheck);
+                    ImageView imageView = mView.findViewById(R.id.krestOld);
+                    AlertDialog dialog = mBuilder.create();
+                    Log.d("myLogs3","here");
+                    dialog.show();
+
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            boolean isChecked;
+                            isChecked = checkBox.isChecked();
+                            if(isChecked){
+                                SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
+                                editor.putBoolean("oldDataFound", false);
+                                editor.apply();
+                                notifSign.setVisibility(View.INVISIBLE);
+                            }
+                            dialog.dismiss();
+                        }
+                    });
+
+                    dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            boolean isChecked;
+                            isChecked = checkBox.isChecked();
+                            if(isChecked){
+                                SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
+                                editor.putBoolean("oldDataFound", false);
+                                editor.apply();
+                                notifSign.setVisibility(View.INVISIBLE);
+                            }
+                        }
+                    });
+*/
                 }
             });
         }
@@ -118,19 +179,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     //inflater.inflate
-                    notifSign.setVisibility(View.INVISIBLE);
-                    SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
-                    editor.putBoolean("ableToUpdate", false);
-                    editor.apply();
 
-
-                    Button button = findViewById(R.id.changed);
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //скрыть при клике на ок
-                        }
-                    });
 
                 }
             });
@@ -163,6 +212,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
+
 
         if(!hasGroup){
             showAlertDialog();
@@ -470,18 +521,23 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(),"Сервер временно недоступен или группа не найдена",Toast.LENGTH_SHORT).show();
                 if(sharedPreferences.contains(groupKey) && !(sharedPreferences.getString(groupKey,null).equals(""))){
                     groupNumber.setText(sharedPreferences.getString(groupKey, ""));
+
+                    if(isNetworkAvailable()){
+                        Toast.makeText(getApplicationContext(),"Сервер временно недоступен или группа не найдена",Toast.LENGTH_SHORT).show();
+                        showAlertDialog();
+                    }
                     Log.d("myLogs3","HERE6");
                 } else{
-
                     Log.d("myLogs3","HERE5");
+                    Toast.makeText(getApplicationContext(),"Сервер временно недоступен или группа не найдена",Toast.LENGTH_SHORT).show();
                     groupNumber.setText("");
+                    showAlertDialog();
                 }
                 error.printStackTrace();
                // if(!(sharedPreferences.getBoolean("oldDataFound",false)) || !(sharedPreferences.getBoolean("oldDataFound",false)))
-                showAlertDialog();
+               // showAlertDialog();
             }
         });
 
@@ -495,6 +551,9 @@ public class MainActivity extends AppCompatActivity {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
+
+
+
 
 
 

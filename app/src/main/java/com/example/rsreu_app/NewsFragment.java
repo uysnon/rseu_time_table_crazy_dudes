@@ -54,7 +54,6 @@ public class NewsFragment extends Fragment {
         myDB = new DatabaseHelper(getContext());
         int newsCount = myDB.getNewsCount();
 
-        Log.d("SecretLogs",Integer.toString(newsCount));
         int i = 0;
 
         MyItem[] array = new MyItem[newsCount];
@@ -64,7 +63,6 @@ public class NewsFragment extends Fragment {
                if(c.moveToFirst()) {
                    while(!c.isAfterLast()) {
                        array[i] = new MyItem("","","","","",null);
-
                        Log.d("SecretLogs", Integer.toString(i));
                        Log.d("SecretLogs", c.getString(c.getColumnIndex("title")));
                        array[i].setTitle(c.getString(c.getColumnIndex("title")));

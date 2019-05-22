@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,6 +19,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,12 +34,17 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.GenericArrayType;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import static java.lang.Thread.sleep;
 
@@ -211,13 +218,12 @@ public class SplashActivity extends AppCompatActivity {
                                       Log.d("myLogs2Old",String.valueOf(oldDate));
                                       Log.d("myLogs2Mills",String.valueOf(mills));
                                       if(mills == oldDate){
-                                          SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
                                           editor.putBoolean("oldDataFound", true);
-
                                           Log.d("myLogs2","HERE6") ;
                                           editor.apply();
                                       }else{
-                                          editor.putBoolean("ableToUpdate",true);
+                                          Log.d("myLogs2","HERE7") ;
+                                          editor.putBoolean("ableToUpdate", true);
                                           editor.putLong("endDate",mills);
                                           editor.apply();
                                       }
@@ -410,14 +416,84 @@ public class SplashActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+
+                final String URL = "http://rsreu.ru/component/ninjarsssyndicator/?feed_id=1&format=raw";
+
+                new DownloadXmlTask().execute(URL);
             }
         });
 
         mQueue.add(request);
 
-
     }
 
 
+    private class DownloadXmlTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            try {
+               return  loadXmlFromNetwork(urls[0]);
+            } catch (IOException e) {
+                return "fail";
+            } catch (XmlPullParserException e) {
+                return "fail";
+            }
+
+        }
+
+        private String loadXmlFromNetwork(String urlString) throws XmlPullParserException, IOException {
+            InputStream stream = null;
+            NewsXMLParser XmlParser = new NewsXMLParser();
+            List<NewsXMLParser.Item> items = null;
+            String titleNews = null;
+            String link = null;
+            String description = null;
+            String date = null;
+            String author = null;
+            Bitmap img = BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                    R.drawable.logomin);
+            DbBitmapUtility dbBitmapUtility = new DbBitmapUtility();
+
+            boolean isInserted;
+
+            try {
+                stream = downloadUrl(urlString);
+                items = XmlParser.parse(stream);
+            } finally {
+                if (stream != null) {
+                    stream.close();
+                }
+            }
+
+            myDB = new DatabaseHelper(getApplicationContext());
+
+            for (NewsXMLParser.Item item : items) {
+                titleNews = item.titleNews;
+                link = item.link;
+                description = item.description;
+                date = item.date;
+                author = item.author;
+                isInserted =  myDB.insertNews(link, titleNews, description, author, date, dbBitmapUtility.getBytes(img));
+                Log.d("newsXml", String.valueOf(isInserted));
+            }
+
+            myDB.close();
+
+            return "loadXml";
+        }
+
+
+        private InputStream downloadUrl(String urlString) throws IOException {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000 /* milliseconds */);
+            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            // Starts the query
+            conn.connect();
+            return conn.getInputStream();
+        }
+    }
 
 }

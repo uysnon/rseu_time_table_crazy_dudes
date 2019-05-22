@@ -81,6 +81,19 @@
     </android.support.v7.widget.Toolbar>
 
 
+    <LinearLayout
+        android:visibility="invisible"
+        android:id="@+id/ll"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="45dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/fragment_container"
