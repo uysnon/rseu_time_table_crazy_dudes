@@ -21,7 +21,7 @@ public class NewsXMLParser {
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES,false);
             parser.setInput(in, null);
             parser.nextTag();
-            return readFeed(parser);
+            return readRss(parser);
 
         }finally {
             in.close();
@@ -29,16 +29,32 @@ public class NewsXMLParser {
     }
 
 
-    private List<Item> readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
+    private List<Item> readRss(XmlPullParser parser) throws XmlPullParserException, IOException {
         List<Item> items = new ArrayList<>();
-
         parser.require(XmlPullParser.START_TAG, ns, "rss");
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
             String name = parser.getName();
-            // Starts by looking for the entry tag
+            if (name.equals("channel")) {
+                items.addAll(readChannel(parser));
+            } else {
+                skip(parser);
+            }
+        }
+        return items;
+    }
+
+
+    private List<Item> readChannel(XmlPullParser parser) throws XmlPullParserException, IOException {
+        List<Item> items = new ArrayList<>();
+        parser.require(XmlPullParser.START_TAG, ns, "channel");
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            String name = parser.getName();
             if (name.equals("item")) {
                 items.add(readItem(parser));
             } else {
@@ -48,6 +64,8 @@ public class NewsXMLParser {
         return items;
     }
 
+
+
     public static class Item{
 
         public final String titleNews;
@@ -56,7 +74,7 @@ public class NewsXMLParser {
         public final String date;
         public final String author;
 
-        private Item(String titleNews, String link, String description, String date, String author) {
+        public Item(String titleNews, String link, String description, String date, String author) {
             this.titleNews = titleNews;
             this.link = link;
             this.description = description;

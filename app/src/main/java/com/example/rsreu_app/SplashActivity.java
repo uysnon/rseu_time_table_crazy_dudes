@@ -374,7 +374,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public void jsonParseNews() {
-        String url = "https://feed2json.org/convert?url=http%3A%2F%2Frsreu.ru%2Fcomponent%2Fninjarsssyndicator%2F%3Ffeed_id%3D1%26format%3Draw";
+        String url = "https://1feed2json.org/convert?url=http%3A%2F%2Frsreu.ru%2Fcomponent%2Fninjarsssyndicator%2F%3Ffeed_id%3D1%26format%3Draw";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -416,6 +416,7 @@ public class SplashActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.d("newsXml","here");
 
                 final String URL = "http://rsreu.ru/component/ninjarsssyndicator/?feed_id=1&format=raw";
 
@@ -432,7 +433,9 @@ public class SplashActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... urls) {
             try {
-               return  loadXmlFromNetwork(urls[0]);
+
+                Log.d("newsXml","here2");
+               return loadXmlFromNetwork(urls[0]);
             } catch (IOException e) {
                 return "fail";
             } catch (XmlPullParserException e) {
@@ -457,6 +460,7 @@ public class SplashActivity extends AppCompatActivity {
             boolean isInserted;
 
             try {
+                Log.d("newsXml","here3");
                 stream = downloadUrl(urlString);
                 items = XmlParser.parse(stream);
             } finally {
@@ -468,12 +472,8 @@ public class SplashActivity extends AppCompatActivity {
             myDB = new DatabaseHelper(getApplicationContext());
 
             for (NewsXMLParser.Item item : items) {
-                titleNews = item.titleNews;
-                link = item.link;
-                description = item.description;
-                date = item.date;
-                author = item.author;
-                isInserted =  myDB.insertNews(link, titleNews, description, author, date, dbBitmapUtility.getBytes(img));
+             item = new NewsXMLParser.Item(item.titleNews,item.link,item.description,item.date,item.author);
+                isInserted =  myDB.insertNews(item.link, item.titleNews, item.description, item.author, item.date, dbBitmapUtility.getBytes(img));
                 Log.d("newsXml", String.valueOf(isInserted));
             }
 
@@ -492,6 +492,7 @@ public class SplashActivity extends AppCompatActivity {
             conn.setDoInput(true);
             // Starts the query
             conn.connect();
+            Log.d("newsXml","here4");
             return conn.getInputStream();
         }
     }
