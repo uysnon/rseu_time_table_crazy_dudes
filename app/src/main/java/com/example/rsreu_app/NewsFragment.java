@@ -16,8 +16,10 @@ import android.widget.Toast;
 
 import com.example.rsreu_app.model.MyItem;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class NewsFragment extends Fragment {
 
@@ -40,16 +42,32 @@ public class NewsFragment extends Fragment {
     private void initRecyclerView(View view) {
         recyclerView = view.findViewById(R.id.my_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-         mAdapter = new MyAdapter();
+        mAdapter = new MyAdapter();
+
         recyclerView.setAdapter(mAdapter);
     }
 
     private void loadItems() {
         Collection<MyItem> items = getItems();
+        MyItem[] ca = Arrays.copyOf(items.toArray(), items.toArray().length, MyItem[].class);
+        List<MyItem> itemsList = new ArrayList<>(Arrays.asList(ca));
+
+
         mAdapter.setItems(items);
+
+        mAdapter.setButtonItemClickListener(new OnButtonItemClickListener() {
+            @Override
+            public void onButtonIsClick(View button, int position) {
+                itemsList.get(position);
+                Log.d("myButton",String.valueOf(itemsList.size()));
+                switch (position){
+                    case 1: Log.d("myButton", "1");
+                }
+            }
+        });
     }
 
-    private  Collection<MyItem> getItems(){
+    private Collection<MyItem> getItems(){
 
         myDB = new DatabaseHelper(getContext());
         int newsCount = myDB.getNewsCount();
