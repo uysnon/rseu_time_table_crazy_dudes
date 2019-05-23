@@ -55,16 +55,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
 
         private String getFormattedDate(String rawDate){
-            SimpleDateFormat utcFormat = new SimpleDateFormat("yyyy-mm-dd");
-            SimpleDateFormat displayedFormat = new SimpleDateFormat("mm/dd/yyyy");
+
+            SimpleDateFormat formatFrom = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z",Locale.US);
 
             try {
-                Date date = utcFormat.parse(rawDate);
-                return displayedFormat.format(date);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
+                java.util.Date tmpDate = formatFrom.parse(rawDate);
+                SimpleDateFormat formatTo = new SimpleDateFormat("dd/MMM/yyyy");
+                return formatTo.format(tmpDate);
+            }catch (Exception e){
+                return "error";
             }
-
         }
     }
 

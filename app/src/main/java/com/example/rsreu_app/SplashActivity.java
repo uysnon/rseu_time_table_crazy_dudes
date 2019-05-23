@@ -128,7 +128,6 @@ public class SplashActivity extends AppCompatActivity {
 
                 if(isNetworkAvailable()){
                     myDB.deleteNews();
-                    ///mQueue = Volley.newRequestQueue(getApplicationContext());
                     XmlParseNews();
                 }
 
@@ -390,6 +389,7 @@ public class SplashActivity extends AppCompatActivity {
         // который показывает процесс загрузки новостей(бред конечно, вообще не нужно,
         // так как это обычная xml-страница, весит очень мало.
         // Если будет время и для красоты. Только.
+        // Так же можно сделать и с расписанием
         @Override
         protected void onPreExecute() {
             super.onPreExecute();

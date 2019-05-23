@@ -21,6 +21,8 @@ import java.util.Collection;
 
 public class NewsFragment extends Fragment {
 
+
+    DatabaseHelper myDB;
     private RecyclerView recyclerView;
     private MyAdapter mAdapter;
 
@@ -28,7 +30,6 @@ public class NewsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news, container, false);
-
         initRecyclerView(view);
         loadItems();
 
@@ -39,7 +40,7 @@ public class NewsFragment extends Fragment {
     private void initRecyclerView(View view) {
         recyclerView = view.findViewById(R.id.my_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mAdapter = new MyAdapter();
+         mAdapter = new MyAdapter();
         recyclerView.setAdapter(mAdapter);
     }
 
@@ -50,24 +51,22 @@ public class NewsFragment extends Fragment {
 
     private  Collection<MyItem> getItems(){
 
-        DatabaseHelper myDB;
         myDB = new DatabaseHelper(getContext());
         int newsCount = myDB.getNewsCount();
 
         int i = 0;
 
         MyItem[] array = new MyItem[newsCount];
-            Cursor c = null;
+            Cursor c;
             try{
                 c = myDB.getAllNews();
                if(c.moveToFirst()) {
                    while(!c.isAfterLast()) {
                        array[i] = new MyItem("","","","","",null);
-                       Log.d("SecretLogs", Integer.toString(i));
-                       Log.d("SecretLogs", c.getString(c.getColumnIndex("title")));
-                       array[i].setTitle(c.getString(c.getColumnIndex("title")));
                        Log.d("SecretLogs", c.getString(c.getColumnIndex("url")));
                        array[i].setUrl(c.getString(c.getColumnIndex("url")));
+                       Log.d("SecretLogs", c.getString(c.getColumnIndex("title")));
+                       array[i].setTitle(c.getString(c.getColumnIndex("title")));
                        Log.d("SecretLogs", c.getString(c.getColumnIndex("summary")));
                        array[i].setSummary(c.getString(c.getColumnIndex("summary")));
                        Log.d("SecretLogs", c.getString(c.getColumnIndex("date")));
@@ -80,10 +79,10 @@ public class NewsFragment extends Fragment {
                    }
                }
 
+               c.close();
+
             }catch (CursorIndexOutOfBoundsException e) {
                 Log.e("LogError", "Error");
-            } finally {
-                c.close();
             }
 
 
