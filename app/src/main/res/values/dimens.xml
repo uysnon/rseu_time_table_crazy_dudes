@@ -2,7 +2,19 @@
 <resources>
     <dimen name="icon_width">20dp</dimen>
     <dimen name="icon_height">20dp</dimen>
-    <dimen name="margin_s">5dp</dimen>
-    <string name="size_table_content">20</string>
-    <string name="size_table_title">25</string>
+    <dimen name="margin_s">8dp</dimen>
+    <string name="margin_s">8</string>
+    <dimen name="margin_m">16dp</dimen>
+
+    <string name="size_table_content_l">24</string>
+    <string name="size_table_title_l">28</string>
+
+    <string name="size_table_content_s">15</string>
+    <string name="size_table_title_s">15</string>
+
+    <dimen name="bottom_menu_height">64dp</dimen>
+    <dimen name="text_size_m">18sp</dimen>
+    <string name="padding_table_l">20</string>
+    <string name="padding_table_m">15</string>
+    <string name="padding_table_s">10</string>
 </resources>

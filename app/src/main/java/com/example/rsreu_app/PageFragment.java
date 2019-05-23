@@ -2,27 +2,20 @@ package com.example.rsreu_app;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.CursorIndexOutOfBoundsException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 
 import com.example.rsreu_app.model.Day;
 import com.example.rsreu_app.model.Lesson;
-import com.example.rsreu_app.model.Week;
 import com.levitnudi.legacytableview.LegacyTableView;
 
-import java.util.ArrayList;
-
 import static com.levitnudi.legacytableview.LegacyTableView.CUSTOM;
-import static com.levitnudi.legacytableview.LegacyTableView.GOLDALINE;
-import static com.levitnudi.legacytableview.LegacyTableView.OCEAN;
 
 /**
  * PageFragment отображает информацию по 1 дню,
@@ -30,7 +23,9 @@ import static com.levitnudi.legacytableview.LegacyTableView.OCEAN;
  * в котором хранится неделя
  */
 public class PageFragment extends Fragment {
-
+    private static final int L_WIDTH_SCREEN = 1000;
+    private static final int M_WIDTH_SCREEN = 900;
+    private static final int S_WIDTH_SCREEN = 800;
     private static final String DAY_KEY = "day_key_PageFragment";
     private static final int NUM_COLUMNS = 4;
 
@@ -67,17 +62,43 @@ public class PageFragment extends Fragment {
             mDay = null;
         }
 
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int width = displayMetrics.widthPixels;
         mTableView = view.findViewById(R.id.time_table_view);
-        LegacyTableView.insertLegacyTitle(
-                getString(R.string.time_lesson),
-                getString(R.string.name_lesson),
-                getString(R.string.teacher),
-                getString(R.string.audience)
-        );
+        if (width < M_WIDTH_SCREEN){
+            LegacyTableView.insertLegacyTitle(
+                    getString(R.string.time_lesson),
+                    getString(R.string.name_lesson),
+                    getString(R.string.audience),
+                    getString(R.string.teacher)
+            );
+            int padding = Integer.valueOf(getActivity().getString(R.string.padding_table_s));
+            mTableView.setTablePadding(padding);
+        } else {
+            LegacyTableView.insertLegacyTitle(
+                    getString(R.string.time_lesson),
+                    getString(R.string.name_lesson),
+                    getString(R.string.audience),
+                    getString(R.string.teacher)
+            );
+            int padding = Integer.valueOf(getActivity().getString(R.string.padding_table_m));
+            mTableView.setTablePadding(padding);
+        }
+        if (width > L_WIDTH_SCREEN){
+            int margin = Integer.valueOf(getActivity().getString(R.string.margin_s));
+            mTableView.setPadding( margin, 0, margin, 0);
+            int padding = Integer.valueOf(getActivity().getString(R.string.padding_table_l));
+            mTableView.setTablePadding(padding);
+        }
+
+
         String array[] = new String[16];
         for (int i = 0; i < array.length; i++) {
             array[i] = Integer.toString(i + 1);
         }
+
+
         LegacyTableView.insertLegacyContent(getStringArrayContentTable());
         mTableView.setTitle(LegacyTableView.readLegacyTitle());
         mTableView.setContent(LegacyTableView.readLegacyContent());
@@ -87,14 +108,18 @@ public class PageFragment extends Fragment {
         mTableView.setContentFont(1);
         mTableView.setBottomShadowColorTint(getActivity().getString(R.string.colorDarkBlue));
         mTableView.setTitleFont(1);
-        mTableView.setContentTextSize(Integer.valueOf(getActivity().getString(R.string.size_table_content)));
-        mTableView.setTitleTextSize(Integer.valueOf(getActivity().getString(R.string.size_table_title)));
+            mTableView.setContentTextSize(Integer.valueOf(getActivity().getString(R.string.size_table_content_l)));
+            mTableView.setTitleTextSize(Integer.valueOf(getActivity().getString(R.string.size_table_title_l)));
+//        mTableView.setMinimumWidth(width);
         mTableView.setBackgroundOddColor("#536DFE");
         mTableView.setBackgroundEvenColor("#536DFE");
         mTableView.setHeaderBackgroundLinearGradientBOTTOM(getActivity().getString(R.string.colorLightBlue));
         mTableView.setHeaderBackgroundLinearGradientTOP(getActivity().getString(R.string.colorLightBlue));
         mTableView.setTitleTextColor(getActivity().getString(R.string.colorDarkBlue));
         mTableView.setContentTextColor(getActivity().getString(R.string.colorDarkBlue));
+
+        mTableView.setContentTextAlignment(2);
+        mTableView.setTitleTextAlignment(2);
         mTableView.build();
 
 
@@ -123,12 +148,13 @@ public class PageFragment extends Fragment {
             Lesson lesson = mDay.getLessons().get(i);
             content[index++] = lesson.getTimeFromTimeId();
             content[index++] = lesson.getTitle();
+            content[index++] = lesson.getRoom();
             content[index] = "";
             for (int j = 0; j < lesson.getTeachers().size(); j++) {
                 content[index] = content[index] + lesson.getTeachers().get(j);
             }
             index++;
-            content[index++] = lesson.getRoom();
+
         }
         return content;
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -11,35 +12,34 @@
         android:layout_width="match_parent"
         android:layout_height="300dp">
 
-       <LinearLayout
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:background="@color/colorYellow"
-           >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorDarkBlue">
 
-           <ImageView
-               android:layout_margin="10dp"
-               android:layout_width="45dp"
-               android:layout_height="45dp"
-               android:src="@drawable/aboutdevelopers"
-               />
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_margin="10dp"
+                app:srcCompat="@drawable/ic_man_in_a_gear_white" />
 
-           <TextView
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_marginTop="20dp"
-               android:textSize="20sp"
-               android:text="О разработчиках"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/pt_sans_bold"
+                android:text="@string/about_developers"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_size_m" />
 
-       </LinearLayout>
+        </LinearLayout>
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorLightBlue"
-            android:orientation="vertical"
-            >
+            android:background="@color/colorWhite"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -47,7 +47,9 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="5dp"
-                android:text="Студент группы 7413 Ловкин М.B."/>
+                android:fontFamily="@font/pt_sans_bold"
+                android:text="@string/lovkin_m"
+                android:textColor="@color/colorDarkBlue" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -55,7 +57,9 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:text="Контактный e-mail:"/>
+                android:text="@string/contact_email"
+                android:fontFamily="@font/pt_sans_regular"
+                android:textColor="@color/colorDarkBlue"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -63,7 +67,9 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:text="furymaxim@gmail.com"/>
+                android:text="@string/furymaxim_gmail_com"
+                android:fontFamily="@font/pt_sans_regular"
+                android:textColor="@color/colorDarkBlue"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -71,7 +77,9 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="5dp"
-                android:text="Студент группы 7413 Горкин А.B."/>
+                android:fontFamily="@font/pt_sans_bold"
+                android:text="@string/gorkin_a"
+                android:textColor="@color/colorDarkBlue" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -79,7 +87,9 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:text="Контактный e-mail:"/>
+                android:text="@string/contact_email"
+                android:fontFamily="@font/pt_sans_regular"
+                android:textColor="@color/colorDarkBlue"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -87,7 +97,9 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:text="avgorkin1@gmail.com"/>
+                android:text="@string/avgorkin1_gmail_com"
+                android:fontFamily="@font/pt_sans_regular"
+                android:textColor="@color/colorDarkBlue"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -95,7 +107,9 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:text="Желаем успехов в учебе!"/>
+                android:text="@string/academic_success"
+                android:fontFamily="@font/pt_sans_regular"
+                android:textColor="@color/colorDarkBlue"/>
 
 
         </LinearLayout>

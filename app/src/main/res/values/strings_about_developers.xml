@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_developers">О разработчиках</string>
+    <string name="lovkin_m">Студент группы 7413 Ловкин М.B.</string>
+    <string name="academic_success">Желаем успехов в учебе!</string>
+    <string name="avgorkin1_gmail_com">avgorkin1@gmail.com</string>
+    <string name="contact_email">Контактный e-mail:</string>
+    <string name="furymaxim_gmail_com">furymaxim@gmail.com</string>
+    <string name="gorkin_a">Студент группы 7413 Горкин А.B.</string>
+</resources>

@@ -60,7 +60,8 @@
                     android:gravity="bottom|fill"
                     android:text="TextView"
                     android:textAlignment="center"
-                    android:textColor="@color/colorWhite" />
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/text_size_m" />
 
             </LinearLayout>
 
@@ -87,8 +88,6 @@
             android:id="@+id/pager"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -96,7 +95,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
             app:layout_constraintVertical_bias="1.0">
-
 
 
         </com.example.rsreu_app.MyPager>

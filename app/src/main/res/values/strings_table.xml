@@ -4,4 +4,5 @@
     <string name="name_lesson">Название предмета</string>
     <string name="teacher">Преподаватель</string>
     <string name="audience">Аудитория</string>
+    <string name="audience_s">Ауд.</string>
 </resources>

@@ -2,14 +2,12 @@ package com.example.rsreu_app;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +16,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.rsreu_app.model.MySetting;
 
@@ -37,8 +34,10 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        String[] textSettings = { "О разработчике"};
-        Bitmap[] imageSettings = { BitmapFactory.decodeResource(view.getResources(),R.drawable.aboutdevelopers)};
+        String[] textSettings = {
+                getActivity().getString(R.string.about_developers)
+        };
+        int imageSettings[] = {R.drawable.ic_man_in_a_gear_blue};
 
         listView = view.findViewById(R.id.list);
 
@@ -83,9 +82,9 @@ public class SettingsFragment extends Fragment {
     class MySAdapter extends ArrayAdapter<String>{
         Context context;
         String myTextSettings[];
-        Bitmap myImageSettings[];
+        int  myImageSettings[];
 
-        public MySAdapter(Context context, String[] titles, Bitmap[] images) {
+        public MySAdapter(Context context, String[] titles, int[] images) {
             super(context, R.layout.settings_item_view, R.id.text_settings, titles);
             this.context = context;
             this.myTextSettings = titles;
@@ -101,8 +100,10 @@ public class SettingsFragment extends Fragment {
 
             ImageView imageView = row.findViewById(R.id.image_settings);
             TextView textView = row.findViewById(R.id.text_settings);
+            textView.setTypeface(ResourcesCompat.getFont(getActivity(), R.font.pt_sans_bold));
+            textView.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorDarkBlue));
 
-            imageView.setImageBitmap(myImageSettings[position]);
+            imageView.setImageDrawable(getActivity().getResources().getDrawable(myImageSettings[position]));
             textView.setText(myTextSettings[position]);
 
 
