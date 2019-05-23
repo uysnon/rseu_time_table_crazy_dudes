@@ -128,8 +128,8 @@ public class SplashActivity extends AppCompatActivity {
 
                 if(isNetworkAvailable()){
                     myDB.deleteNews();
-                    mQueue = Volley.newRequestQueue(getApplicationContext());
-                    jsonParseNews();
+                    ///mQueue = Volley.newRequestQueue(getApplicationContext());
+                    XmlParseNews();
                 }
 
                 hasGroup = sharedPreferences.getBoolean("hasGroup",false);
@@ -373,78 +373,52 @@ public class SplashActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 
-    public void jsonParseNews() {
-        String url = "https://1feed2json.org/convert?url=http%3A%2F%2Frsreu.ru%2Fcomponent%2Fninjarsssyndicator%2F%3Ffeed_id%3D1%26format%3Draw";
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try{
+    public void XmlParseNews() {
 
-                    myDB = new DatabaseHelper(getApplicationContext());
-                    JSONArray jsonArrayItems = response.getJSONArray("items");
+        final String URL = "http://rsreu.ru/component/ninjarsssyndicator/?feed_id=1&format=raw";
 
-                    boolean isInserted;
+        new DownloadXmlTask().execute(URL);
 
-                    String urlNews, title, summary, author, date;
-                    Bitmap img = BitmapFactory.decodeResource(getApplicationContext().getResources(),
-                            R.drawable.logomin);
-                    DbBitmapUtility dbBitmapUtility = new DbBitmapUtility();
-                    for(int i = 0; i < jsonArrayItems.length(); i++) {
-                        JSONObject item = jsonArrayItems.getJSONObject(i);
-                        urlNews = item.getString("url");
-                        title = item.getString("title");
-                        summary = item.getString("summary");
-                        author = item.getJSONObject("author").getString("name");
-                        date = item.getString("date_published");
-                        try {
-                           isInserted =  myDB.insertNews(urlNews, title, summary, author, date, dbBitmapUtility.getBytes(img));
-                           Log.d("news", String.valueOf(isInserted) + i);
-                        }catch (IOException e){
-                            e.printStackTrace();
-                        }
-
-                    }
-
-                    myDB.close();
-
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-
-                mQueue.stop();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("newsXml","here");
-
-                final String URL = "http://rsreu.ru/component/ninjarsssyndicator/?feed_id=1&format=raw";
-
-                new DownloadXmlTask().execute(URL);
-            }
-        });
-
-        mQueue.add(request);
 
     }
 
 
-    private class DownloadXmlTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... urls) {
-            try {
+    private class DownloadXmlTask extends AsyncTask<String, Integer, Integer> {
 
+
+        // Если у пользователя медленный интернет, то пусть будет Progress bar,
+        // который показывает процесс загрузки новостей(бред конечно, вообще не нужно,
+        // так как это обычная xml-страница, весит очень мало.
+        // Если будет время и для красоты. Только.
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected Integer doInBackground(String... urls) {
+            try {
                 Log.d("newsXml","here2");
                return loadXmlFromNetwork(urls[0]);
             } catch (IOException e) {
-                return "fail";
+                return 0;
             } catch (XmlPullParserException e) {
-                return "fail";
+                return 0;
             }
 
         }
 
-        private String loadXmlFromNetwork(String urlString) throws XmlPullParserException, IOException {
+        private Integer loadXmlFromNetwork(String urlString) throws XmlPullParserException, IOException {
             InputStream stream = null;
             NewsXMLParser XmlParser = new NewsXMLParser();
             List<NewsXMLParser.Item> items = null;
@@ -479,7 +453,7 @@ public class SplashActivity extends AppCompatActivity {
 
             myDB.close();
 
-            return "loadXml";
+            return 1;
         }
 
 
