@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,11 +21,14 @@ import java.util.Locale;
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
    private List<MyItem> myItemList = new ArrayList<>();
    DbBitmapUtility dbBitmapUtility = new DbBitmapUtility();
+   OnButtonItemClickListener buttonItemClickListener;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
      class MyViewHolder extends RecyclerView.ViewHolder {
+
+        OnButtonItemClickListener buttonItemClickListener;
         // each data item is just a string in this case
         private TextView title;
         private TextView url;
@@ -32,6 +36,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         private TextView date;
         private TextView author;
         private ImageView image;
+        private Button button;
 
         public MyViewHolder(View v) {
             super(v);
@@ -41,6 +46,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             date = v.findViewById(R.id.itemDate);
             author = v.findViewById(R.id.itemAuthor);
             image = v.findViewById(R.id.itemImage);
+            button = v.findViewById(R.id.fullItem);
+        }
+
+        public Button getButton() {
+            return button;
         }
 
         public void bind(MyItem myItem){
@@ -54,17 +64,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         }
 
 
+
         private String getFormattedDate(String rawDate){
-            SimpleDateFormat utcFormat = new SimpleDateFormat("yyyy-mm-dd");
-            SimpleDateFormat displayedFormat = new SimpleDateFormat("mm/dd/yyyy");
+
+            SimpleDateFormat formatFrom = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z",Locale.US);
 
             try {
-                Date date = utcFormat.parse(rawDate);
-                return displayedFormat.format(date);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
+                java.util.Date tmpDate = formatFrom.parse(rawDate);
+                SimpleDateFormat formatTo = new SimpleDateFormat("dd/MMM/yyyy");
+                return formatTo.format(tmpDate);
+            }catch (Exception e){
+                return "error";
             }
-
         }
     }
 
@@ -72,6 +83,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
   /*  public MyAdapter(List<MyItem> mItemList) {
         myItemList = mItemList;
     }*/
+
+    public void setButtonItemClickListener(OnButtonItemClickListener buttonItemClickListener){
+        this.buttonItemClickListener = buttonItemClickListener;
+    }
 
     // Create new views (invoked by the layout manager)
     @Override
@@ -86,6 +101,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public void onBindViewHolder(MyViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+        if(buttonItemClickListener != null){
+            holder.getButton().setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    buttonItemClickListener.onButtonIsClick(v,position);
+                }
+            });
+        }
+
+
         holder.bind(myItemList.get(position));
     }
 

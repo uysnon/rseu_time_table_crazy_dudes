@@ -16,11 +16,15 @@ import android.widget.Toast;
 
 import com.example.rsreu_app.model.MyItem;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class NewsFragment extends Fragment {
 
+
+    DatabaseHelper myDB;
     private RecyclerView recyclerView;
     private MyAdapter mAdapter;
 
@@ -28,7 +32,6 @@ public class NewsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news, container, false);
-
         initRecyclerView(view);
         loadItems();
 
@@ -40,36 +43,48 @@ public class NewsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.my_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new MyAdapter();
+
         recyclerView.setAdapter(mAdapter);
     }
 
     private void loadItems() {
         Collection<MyItem> items = getItems();
+        MyItem[] ca = Arrays.copyOf(items.toArray(), items.toArray().length, MyItem[].class);
+        List<MyItem> itemsList = new ArrayList<>(Arrays.asList(ca));
+
+
         mAdapter.setItems(items);
+
+        mAdapter.setButtonItemClickListener(new OnButtonItemClickListener() {
+            @Override
+            public void onButtonIsClick(View button, int position) {
+                itemsList.get(position);
+                Log.d("myButton",String.valueOf(itemsList.size()));
+                switch (position){
+                    case 1: Log.d("myButton", "1");
+                }
+            }
+        });
     }
 
-    private  Collection<MyItem> getItems(){
+    private Collection<MyItem> getItems(){
 
-        DatabaseHelper myDB;
         myDB = new DatabaseHelper(getContext());
         int newsCount = myDB.getNewsCount();
 
-        Log.d("SecretLogs",Integer.toString(newsCount));
         int i = 0;
 
         MyItem[] array = new MyItem[newsCount];
-            Cursor c = null;
+            Cursor c;
             try{
                 c = myDB.getAllNews();
                if(c.moveToFirst()) {
                    while(!c.isAfterLast()) {
                        array[i] = new MyItem("","","","","",null);
-
-                       Log.d("SecretLogs", Integer.toString(i));
-                       Log.d("SecretLogs", c.getString(c.getColumnIndex("title")));
-                       array[i].setTitle(c.getString(c.getColumnIndex("title")));
                        Log.d("SecretLogs", c.getString(c.getColumnIndex("url")));
                        array[i].setUrl(c.getString(c.getColumnIndex("url")));
+                       Log.d("SecretLogs", c.getString(c.getColumnIndex("title")));
+                       array[i].setTitle(c.getString(c.getColumnIndex("title")));
                        Log.d("SecretLogs", c.getString(c.getColumnIndex("summary")));
                        array[i].setSummary(c.getString(c.getColumnIndex("summary")));
                        Log.d("SecretLogs", c.getString(c.getColumnIndex("date")));
@@ -82,10 +97,10 @@ public class NewsFragment extends Fragment {
                    }
                }
 
+               c.close();
+
             }catch (CursorIndexOutOfBoundsException e) {
                 Log.e("LogError", "Error");
-            } finally {
-                c.close();
             }
 
 
