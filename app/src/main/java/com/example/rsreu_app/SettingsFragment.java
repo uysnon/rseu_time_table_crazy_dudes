@@ -17,15 +17,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.rsreu_app.model.MySetting;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class SettingsFragment extends Fragment {
 
     ListView listView;
-    public List<MySetting> settings = new ArrayList<>();
 
 
 
@@ -34,10 +28,8 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        String[] textSettings = {
-                getActivity().getString(R.string.about_developers)
-        };
-        int imageSettings[] = {R.drawable.ic_man_in_a_gear_blue};
+        String[] textSettings = { getActivity().getString(R.string.about_application), getActivity().getString(R.string.about_developers)};
+        int imageSettings[] = { R.drawable.ic_phonelink_setup_blue_24dp, R.drawable.ic_man_in_a_gear_blue};
 
         listView = view.findViewById(R.id.list);
 
@@ -45,23 +37,21 @@ public class SettingsFragment extends Fragment {
 
         listView.setAdapter(mySAdapter);
 
-
-        /*MySetting setting = new MySetting("О разработчике",  BitmapFactory.decodeResource(getContext().getResources(),
-                R.drawable.aboutdevelopers));
-        settings.add(setting);
-
-
-
-        ListViewAdapter listViewAdapter = new ListViewAdapter(getContext(), settings);
-        listView.setAdapter(listViewAdapter);*/
-
-
-
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(position == 0){
+                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+                    mBuilder.setCancelable(true);
+                    View mView = getLayoutInflater().inflate(R.layout.dialog_about_application,null);
+
+                    mBuilder.setView(mView);
+                    AlertDialog dialog = mBuilder.create();
+                    dialog.show();
+                }
+
+
+                if(position == 1){
                     AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
                     mBuilder.setCancelable(true);
                     View mView = getLayoutInflater().inflate(R.layout.dialog_about_developers,null);
@@ -69,7 +59,6 @@ public class SettingsFragment extends Fragment {
                     mBuilder.setView(mView);
                     AlertDialog dialog = mBuilder.create();
                     dialog.show();
-
                 }
             }
         });
@@ -81,8 +70,8 @@ public class SettingsFragment extends Fragment {
 
     class MySAdapter extends ArrayAdapter<String>{
         Context context;
-        String myTextSettings[];
-        int  myImageSettings[];
+        String[] myTextSettings;
+        int[]  myImageSettings;
 
         public MySAdapter(Context context, String[] titles, int[] images) {
             super(context, R.layout.settings_item_view, R.id.text_settings, titles);
@@ -96,7 +85,7 @@ public class SettingsFragment extends Fragment {
         public View getView(int position, @Nullable View convertView, @Nullable ViewGroup parent) {
 
             LayoutInflater layoutInflater = LayoutInflater.from(context);
-            View row = layoutInflater.inflate(R.layout.settings_item_view,parent,false);
+            View row = layoutInflater.inflate(R.layout.settings_item_view, parent,false);
 
             ImageView imageView = row.findViewById(R.id.image_settings);
             TextView textView = row.findViewById(R.id.text_settings);
