@@ -68,7 +68,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         private String getFormattedDate(String rawDate){
 
             SimpleDateFormat formatFrom = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z",Locale.US);
-
             try {
                 java.util.Date tmpDate = formatFrom.parse(rawDate);
                 SimpleDateFormat formatTo = new SimpleDateFormat("dd/MMM/yyyy");

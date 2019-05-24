@@ -1,5 +1,6 @@
 package com.example.rsreu_app;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.os.Bundle;
@@ -60,9 +61,15 @@ public class NewsFragment extends Fragment {
             public void onButtonIsClick(View button, int position) {
                 itemsList.get(position);
                 Log.d("myButton",String.valueOf(itemsList.size()));
-                switch (position){
-                    case 1: Log.d("myButton", "1");
-                }
+
+                Intent intent = new Intent(getActivity(),MyWebView.class);
+
+                String URL = "url";
+                String link = itemsList.get(position).getUrl();
+                intent.putExtra(URL, link);
+                startActivity(intent);
+
+
             }
         });
     }
@@ -102,6 +109,8 @@ public class NewsFragment extends Fragment {
             }catch (CursorIndexOutOfBoundsException e) {
                 Log.e("LogError", "Error");
             }
+
+            myDB.close();
 
 
         return Arrays.asList(array);

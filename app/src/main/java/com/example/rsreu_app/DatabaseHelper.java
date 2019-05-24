@@ -153,12 +153,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public Cursor getLessonTime(int lessonNumber){
+    public String getLessonFromTime(int lessonNumber){
         SQLiteDatabase db = this.getWritableDatabase();
         String[] selectionArgs = new String[]{Integer.toString(lessonNumber)};
-        Cursor res = db.rawQuery("select * from times_table where lessonNumber=?",selectionArgs);
-        return res;
+        Cursor res = db.rawQuery("select fromTime from times_table where lessonNumber=?",selectionArgs);
+        String fromTime = res.getString(res.getColumnIndex("fromTime"));
+        res.close();
+        return fromTime;
     }
+
+    public String getLessonToTime(int lessonNumber){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String[] selectionArgs = new String[]{Integer.toString(lessonNumber)};
+        Cursor res = db.rawQuery("select toTime from times_table where lessonNumber=?",selectionArgs);
+        String toTime = res.getString(res.getColumnIndex("toTime"));
+        res.close();
+        return toTime;
+    }
+
 
     public Cursor getAllDataTimes(){
         SQLiteDatabase db = this.getWritableDatabase();
