@@ -31,6 +31,13 @@ public class MyPageAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return (PageFragment.newInstance(mDoubleWeek.getLongWeek().getDays().get(position)));
+
+        if (!ScheduleFragment.isDateInSemester) {
+            return  (PageFragment.newInstance(mDoubleWeek.getLongWeek().getDays().get(position), PageFragment.MODE_NOT_DATA_FROM_SEMESTER));
+        } else if (mDoubleWeek.getLongWeek().getDays().get(position).getLessons().size() == 0) {
+            return  (PageFragment.newInstance(mDoubleWeek.getLongWeek().getDays().get(position), PageFragment.MODE_WEEKEND));
+        } else return  (PageFragment.newInstance(mDoubleWeek.getLongWeek().getDays().get(position)));
+
     }
+
 }

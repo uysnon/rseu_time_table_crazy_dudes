@@ -9,6 +9,10 @@
     <string name="size_table_content_l">24</string>
     <string name="size_table_title_l">28</string>
 
+
+    <string name="size_table_content_xl">35</string>
+    <string name="size_table_title_xl">35</string>
+
     <string name="size_table_content_s">15</string>
     <string name="size_table_title_s">15</string>
 

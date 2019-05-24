@@ -14,6 +14,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String FROM_TIME_LESSON = "fromTime";
     public static final String TO_TIME_LESSON = "toTime";
+    public  static final String START_DATE_SEMESTER = "startDate";
+    public static final String END_DATE_SEMESTER = "endDate";
+    public static final String IS_NUMERATOR = "isNumerator";
 
 
     public static final String DATABASE_NAME = "app.db";
