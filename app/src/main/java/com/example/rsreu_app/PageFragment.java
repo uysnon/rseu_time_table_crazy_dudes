@@ -146,7 +146,7 @@ public class PageFragment extends Fragment {
         int index = 0;
         for (int i = 0; i < mDay.getLessons().size(); i++) {
             Lesson lesson = mDay.getLessons().get(i);
-            content[index++] = lesson.getTimeFromTimeId();
+            content[index++] = lesson.getTimeFromTimeId(getActivity());
             content[index++] = lesson.getTitle();
             content[index++] = lesson.getRoom();
             content[index] = "";

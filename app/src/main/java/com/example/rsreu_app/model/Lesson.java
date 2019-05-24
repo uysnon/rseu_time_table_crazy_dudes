@@ -1,5 +1,10 @@
 package com.example.rsreu_app.model;
 
+import android.content.Context;
+import android.database.Cursor;
+
+import com.example.rsreu_app.DatabaseHelper;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -16,15 +21,15 @@ public class Lesson implements Serializable {
     private String dates;
 
     public Lesson(
-                  int timeId,
-                  int duration,
-                  String title,
-                  String type,
-                  boolean optional,
-                  ArrayList<String> teachers,
-                  String room,
-                  String build,
-                  String dates) {
+            int timeId,
+            int duration,
+            String title,
+            String type,
+            boolean optional,
+            ArrayList<String> teachers,
+            String room,
+            String build,
+            String dates) {
 
         this.timeId = timeId;
         this.duration = duration;
@@ -36,7 +41,6 @@ public class Lesson implements Serializable {
         this.build = build;
         this.dates = dates;
     }
-
 
 
     public int getTimeId() {
@@ -116,10 +120,30 @@ public class Lesson implements Serializable {
      * Метод для получение время проведения пары в виде строки
      * из поля timeId,
      * в которой хранится время начала и время конца пары
+     *
      * @return строка, в которой содержится время начала и конца пары
      */
-    public  String getTimeFromTimeId(){
-        switch (this.timeId){
+    public String getTimeFromTimeId(Context context) {
+//        Cursor cursor = null;
+//        DatabaseHelper myDB = new DatabaseHelper(context);
+//        if (this.timeId >= 0) {
+//            cursor = myDB.getLessonTime(this.timeId);
+//            if (cursor.getCount() > 0) {
+////            return getTimeLesson(
+////                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.FROM_TIME_LESSON)),
+////                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.TO_TIME_LESSON))
+////            );
+////        }
+//                return getTimeLesson(
+//                        cursor.getString(1),
+//                        cursor.getString(2)
+//                );
+//            }
+//        }
+//        return "";
+
+
+        switch (this.timeId) {
             case (1):
                 return "8:10 - 9:45";
             case (2):
@@ -130,16 +154,20 @@ public class Lesson implements Serializable {
                 return "13:35 - 15:10";
             case (5):
                 return "15:20 - 17:05";
-            case(6):
+            case (6):
                 return "17:05 - 18:40";
-            case(7):
+            case (7):
                 return "18:50 - 20:15";
-            case(8):
+            case (8):
                 return "20:25 - 21:30";
-            case(9):
+            case (9):
                 return "09:00 - 17:00";
             default:
                 return "не помню какая пара уже";
         }
+    }
+
+    private static String getTimeLesson(String from, String to) {
+        return (from + " - " + to);
     }
 }
