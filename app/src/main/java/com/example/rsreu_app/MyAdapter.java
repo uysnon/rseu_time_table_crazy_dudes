@@ -70,7 +70,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             SimpleDateFormat formatFrom = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z",Locale.US);
             try {
                 java.util.Date tmpDate = formatFrom.parse(rawDate);
-                SimpleDateFormat formatTo = new SimpleDateFormat("dd/MMM/yyyy");
+                SimpleDateFormat formatTo = new SimpleDateFormat("dd MMM");
                 return formatTo.format(tmpDate);
             }catch (Exception e){
                 return "error";

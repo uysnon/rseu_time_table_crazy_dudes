@@ -9,9 +9,15 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Новостная лента РГРТУ"
+        android:layout_marginBottom="@dimen/margin_s"
+        android:background="@color/colorLightBlue"
+        android:fontFamily="@font/pt_sans_bold"
         android:gravity="center_horizontal"
-        android:textSize="20sp"/>
+        android:paddingTop="@dimen/margin_s"
+        android:paddingBottom="@dimen/margin_s"
+        android:text="Новостная лента РГРТУ"
+        android:textColor="@color/colorDarkBlue"
+        android:textSize="20sp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/my_recycler_view"

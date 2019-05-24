@@ -120,13 +120,7 @@ public class MainActivity extends AppCompatActivity {
             bell.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    LinearLayout ll;
-                    ll = findViewById(R.id.ll);
-                    ll.setVisibility(View.VISIBLE);
-                    LayoutInflater layoutInflater = getLayoutInflater();
-                    View mView = layoutInflater.inflate(R.layout.old_data,null,false);
-                    ll.addView(mView);
-                    ll.bringToFront();
+
 
                     /*AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
                     mBuilder.setCancelable(true);
