@@ -385,11 +385,6 @@ public class SplashActivity extends AppCompatActivity {
     private class DownloadXmlTask extends AsyncTask<String, Integer, Integer> {
 
 
-        // Если у пользователя медленный интернет, то пусть будет Progress bar,
-        // который показывает процесс загрузки новостей(бред конечно, вообще не нужно,
-        // так как это обычная xml-страница, весит очень мало.
-        // Если будет время и для красоты. Только.
-        // Так же можно сделать и с расписанием
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -421,12 +416,8 @@ public class SplashActivity extends AppCompatActivity {
         private Integer loadXmlFromNetwork(String urlString) throws XmlPullParserException, IOException {
             InputStream stream = null;
             NewsXMLParser XmlParser = new NewsXMLParser();
-            List<NewsXMLParser.Item> items = null;
-            String titleNews = null;
-            String link = null;
-            String description = null;
-            String date = null;
-            String author = null;
+            List<NewsXMLParser.Item> items;
+
             Bitmap img = BitmapFactory.decodeResource(getApplicationContext().getResources(),
                     R.drawable.logomin);
             DbBitmapUtility dbBitmapUtility = new DbBitmapUtility();
