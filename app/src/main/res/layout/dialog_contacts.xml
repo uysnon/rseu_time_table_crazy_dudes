@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorDarkBlue">
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_margin="10dp"
+                app:srcCompat="@drawable/ic_contacts_white_45dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/pt_sans_bold"
+                android:text="@string/contacts"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_size_m" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorWhite"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:fontFamily="@font/pt_sans_bold"
+                android:text="@string/rsreu_address"
+                android:textColor="@color/colorDarkBlue" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/email"
+                android:fontFamily="@font/pt_sans_bold"
+                android:textColor="@color/colorDarkBlue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/how_to"
+                android:fontFamily="@font/pt_sans_bold"
+                android:textColor="@color/colorDarkBlue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/phone_number"
+                android:fontFamily="@font/pt_sans_bold"
+                android:textColor="@color/colorDarkBlue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/ph_n"
+                android:fontFamily="@font/pt_sans_bold"
+                android:textColor="@color/colorDarkBlue"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="1) От моего текущего местоположения:"
+                android:fontFamily="@font/pt_sans_regular"
+                android:textColor="@color/colorDarkBlue"/>
+
+            <Button
+                android:id="@+id/build_way"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/icon_height"
+                android:background="@color/colorDarkBlue"
+                android:fontFamily="@font/pt_sans_bold"
+                android:gravity="center"
+                android:text="  Проложить маршрут  "
+                android:textColor="@color/colorWhite" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="2) От ж/д вокзала Рязань-I:"
+                android:fontFamily="@font/pt_sans_regular"
+                android:textColor="@color/colorDarkBlue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="От вокзала до пл. Победы пешком до остановки Пл. Победы на противоположной вокзалу стороне Первомайского проспекта; троллейбус №9 или маршрутные такси №№50, 70, 71, 82 и др. до остановки Радиоуниверситет."
+                android:fontFamily="@font/pt_sans_regular"
+                android:textColor="@color/colorDarkBlue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="3) От ж/д вокзала Рязань-II:"
+                android:fontFamily="@font/pt_sans_regular"
+                android:textColor="@color/colorDarkBlue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="От остановки со стороны вокзала троллейбус №5 до остановки Радиоуниверситет.
+До ост. Вокзальная пешком; троллейбус №9 или маршрутные такси №№50, 70, 71, 82 и др. до остановки Радиоуниверситет."
+                android:fontFamily="@font/pt_sans_regular"
+                android:textColor="@color/colorDarkBlue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="4) От а/в Центральный:"
+                android:fontFamily="@font/pt_sans_regular"
+                android:textColor="@color/colorDarkBlue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="От остановки Автовокзал (со стороны вокзала) троллейбус №9 или маршрутные такси №№ 50, 70, 71, 82 и др. до остановки Радиоуниверситет."
+                android:fontFamily="@font/pt_sans_regular"
+                android:textColor="@color/colorDarkBlue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="5) От а/в Приокский:"
+                android:fontFamily="@font/pt_sans_regular"
+                android:textColor="@color/colorDarkBlue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="От пл. Свободы троллейбусом №3 или маршрутными такси №№99, 65 до остановки Радиоуниверситет."
+                android:fontFamily="@font/pt_sans_regular"
+                android:textColor="@color/colorDarkBlue"/>
+
+        </LinearLayout>
+
+
+
+
+    </LinearLayout>
+
+</LinearLayout>

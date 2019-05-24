@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="contacts">Контакты</string>
+    <string name="rsreu_address">Адрес РГРТУ: 390005, г.Рязань, ул.Гагарина, 59/1</string>
+    <string name="email">E-mail: rgrtu@rsreu.ru</string>
+    <string name="how_to">Проезд до РГРТУ:</string>
+    <string name="phone_number">Тел.: +7(4912) 72-03-03</string>
+    <string name="ph_n">Приемная комиссия: +7(4912)72-04-24</string>
+</resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="about_application">О приложении"</string>
-    <string name="app_name_full">Название приложения: &quot;Ассистент РГРТУ&quot;</string>
+    <string name="about_application">О приложении</string>
+    <string name="app_name_full">Название приложения: \"Ассистент РГРТУ\"</string>
     <string name="app_version">Версия: 1.0.0</string>
 </resources>

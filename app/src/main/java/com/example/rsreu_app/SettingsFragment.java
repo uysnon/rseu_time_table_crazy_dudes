@@ -13,9 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SettingsFragment extends Fragment {
 
@@ -28,8 +30,8 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        String[] textSettings = { getActivity().getString(R.string.about_application), getActivity().getString(R.string.about_developers)};
-        int imageSettings[] = { R.drawable.ic_phonelink_setup_blue_24dp, R.drawable.ic_man_in_a_gear_blue};
+        String[] textSettings = { getActivity().getString(R.string.contacts),getActivity().getString(R.string.about_application), getActivity().getString(R.string.about_developers)};
+        int imageSettings[] = { R.drawable.ic_contacts_blue_24dp ,R.drawable.ic_phonelink_setup_blue_24dp, R.drawable.ic_man_in_a_gear_blue};
 
         listView = view.findViewById(R.id.list);
 
@@ -40,7 +42,26 @@ public class SettingsFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 if(position == 0){
+                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+                    mBuilder.setCancelable(true);
+                    View mView = getLayoutInflater().inflate(R.layout.dialog_contacts,null);
+                    Button mButton = mView.findViewById(R.id.build_way);
+
+                    mButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(getActivity().getApplicationContext(),"here",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    mBuilder.setView(mView);
+                    AlertDialog dialog = mBuilder.create();
+                    dialog.show();
+                }
+
+
+                if(position == 1){
                     AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
                     mBuilder.setCancelable(true);
                     View mView = getLayoutInflater().inflate(R.layout.dialog_about_application,null);
@@ -51,7 +72,7 @@ public class SettingsFragment extends Fragment {
                 }
 
 
-                if(position == 1){
+                if(position == 2){
                     AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
                     mBuilder.setCancelable(true);
                     View mView = getLayoutInflater().inflate(R.layout.dialog_about_developers,null);
