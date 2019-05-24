@@ -124,47 +124,44 @@ public class Lesson implements Serializable {
      * @return строка, в которой содержится время начала и конца пары
      */
     public String getTimeFromTimeId(Context context) {
-//        Cursor cursor = null;
-//        DatabaseHelper myDB = new DatabaseHelper(context);
-//        if (this.timeId >= 0) {
-//            cursor = myDB.getLessonTime(this.timeId);
-//            if (cursor.getCount() > 0) {
-////            return getTimeLesson(
-////                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.FROM_TIME_LESSON)),
-////                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.TO_TIME_LESSON))
-////            );
-////        }
-//                return getTimeLesson(
-//                        cursor.getString(1),
-//                        cursor.getString(2)
-//                );
-//            }
-//        }
-//        return "";
 
-
-        switch (this.timeId) {
-            case (1):
-                return "8:10 - 9:45";
-            case (2):
-                return "9:55 - 11:30";
-            case (3):
-                return "11:40 - 13:15";
-            case (4):
-                return "13:35 - 15:10";
-            case (5):
-                return "15:20 - 17:05";
-            case (6):
-                return "17:05 - 18:40";
-            case (7):
-                return "18:50 - 20:15";
-            case (8):
-                return "20:25 - 21:30";
-            case (9):
-                return "09:00 - 17:00";
-            default:
-                return "не помню какая пара уже";
+        Cursor cursor = null;
+        DatabaseHelper myDB = new DatabaseHelper(context);
+        if (this.timeId >= 0) {
+            cursor = myDB.getLessonTime(this.timeId);
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                return getTimeLesson(
+                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.FROM_TIME_LESSON)),
+                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.TO_TIME_LESSON))
+                );
+            }
         }
+        return "";
+
+
+//        switch (this.timeId) {
+//            case (1):
+//                return "8:10 - 9:45";
+//            case (2):
+//                return "9:55 - 11:30";
+//            case (3):
+//                return "11:40 - 13:15";
+//            case (4):
+//                return "13:35 - 15:10";
+//            case (5):
+//                return "15:20 - 17:05";
+//            case (6):
+//                return "17:05 - 18:40";
+//            case (7):
+//                return "18:50 - 20:15";
+//            case (8):
+//                return "20:25 - 21:30";
+//            case (9):
+//                return "09:00 - 17:00";
+//            default:
+//                return "не помню какая пара уже";
+//        }
     }
 
     private static String getTimeLesson(String from, String to) {

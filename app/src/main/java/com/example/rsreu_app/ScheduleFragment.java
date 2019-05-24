@@ -4,17 +4,21 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewManager;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,6 +29,7 @@ import com.example.rsreu_app.model.DoubleWeek;
 import com.example.rsreu_app.model.Lesson;
 import com.example.rsreu_app.model.Week;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,8 +41,9 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
 
     MyPager pager;
     DoubleWeek mDoubleWeek;
-    Date mDate;
-    Date mFirstDayOfSemester;
+    static Date mDate;
+    static Date mFirstDayOfSemester;
+    static Date mLastDayOfSemester;
     boolean mIsFirstDayNumerator;
     private LinearLayout mLayoutGoNext;
     private LinearLayout mLayoutGoPrev;
@@ -46,58 +52,12 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
     private ImageView mImageArrowRight;
     private ImageView mImageArrowLeft;
     private ImageView mImageCalendar;
-
+    private DatabaseHelper mDatabaseHelper;
+    public static boolean isDateInSemester;
     private LinearLayout mLinearLayoutShareSchedule;
     private ImageView mImageShareSchedule;
     private TextView mTextShareSchedule;
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        Log.d("lifecycle","onAttach");
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d("lifecycle","onCreate");
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.d("lifecycle","onActivityCreated");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("lifecycle","onResume");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d("lifecycle","onPause");
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d("lifecycle","onDestroyView");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d("lifecycle","onDestroy");
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Log.d("lifecycle","onDetach");
-    }
 
     /**
      * Выбранный (текущий по умолчанию) день недели
@@ -134,14 +94,32 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         mImageShareSchedule = view.findViewById(R.id.image_share_schedule);
         mTextShareSchedule = view.findViewById(R.id.text_share_schedule);
         pager = view.findViewById(R.id.pager);
+        mDatabaseHelper = new DatabaseHelper(getActivity());
         mDate = new Date();
         /*
         Покачто данные взяты "с воздуха", далее должны быть заменены взтыми из бд
          */
-        mIsFirstDayNumerator = true;
-        mFirstDayOfSemester = new Date(2019 - 1900, 1, 11);
-        /*
-         */
+        Cursor cursor = mDatabaseHelper.getAllDataSemester();
+        if (cursor.getCount() > 0){
+            cursor.moveToFirst();
+            mIsFirstDayNumerator = (cursor.getInt(cursor.getColumnIndex(DatabaseHelper.IS_NUMERATOR)) == 1) ;
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            String firstMS = cursor.getString(cursor.getColumnIndex(DatabaseHelper.START_DATE_SEMESTER));
+            String lastMS = cursor.getString(cursor.getColumnIndex(DatabaseHelper.END_DATE_SEMESTER));
+            try {
+                mFirstDayOfSemester = simpleDateFormat.parse(firstMS);
+                mLastDayOfSemester = simpleDateFormat.parse(lastMS);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else
+        {
+            mIsFirstDayNumerator = true;
+            mFirstDayOfSemester = new Date(2019 - 1900, 1, 11);
+            mFirstDayOfSemester = new Date(2019 - 1900, 1, 11);
+        }
+
+
 
         Log.d("SCHEDULE_FRAGMENT", "ОНКРЕАТЕ ВЬЮ");
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SplashActivity.myPreference, Context.MODE_PRIVATE);
@@ -152,35 +130,24 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
             pager.setAdapter(new MyPageAdapter(getFragmentManager(), mDoubleWeek));
         }
 
-//        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-//            private static final float thresholdOffset = 0.5f;
-//            private boolean scrollStarted, checkDirection;
-//
-//            @Override
-//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//                if (checkDirection) {
-//                    if (thresholdOffset > positionOffset) {
-//                        nextPage();
-//                    } else {
-//                        prevPage();
-//                    }
-//                    checkDirection = false;
-//                }
-//            }
-//
-//            @Override
-//            public void onPageSelected(int position) {}
-//
-//            @Override
-//            public void onPageScrollStateChanged(int state) {
-//                if (!scrollStarted && state == ViewPager.SCROLL_STATE_DRAGGING) {
-//                    scrollStarted = true;
-//                    checkDirection = true;
-//                } else {
-//                    scrollStarted = false;
-//                }
-//            }
-//        });
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            public void onPageScrollStateChanged(int state) {
+            }
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            public void onPageSelected(int position) {
+                if (!(isDateInCurrentSemester()) ||
+                        (mDoubleWeek.getLongWeek().getDays().get(position).getLessons().size() == 0)){
+                    mLinearLayoutShareSchedule.setVisibility(View.INVISIBLE);
+                } else {
+                    mLinearLayoutShareSchedule.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+
+
+
 
         mLayoutGoNext.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,23 +156,6 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
             }
         });
 
-//        mLayoutGoNext.setOnTouchListener(new View.OnTouchListener(){
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN: // нажатие
-//                        mLayoutGoNext.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorWhite));
-//                        mImageArrowRight.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_right_arrow_black));
-//                        break;
-//                    case MotionEvent.ACTION_UP: // отпускание
-//                    case MotionEvent.ACTION_CANCEL:
-//                        mLayoutGoNext.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorDarkBlue));
-//                        mImageArrowRight.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_right_arrow_white));
-//                        break;
-//                }
-//                return true;
-//            }
-//        });
         mLayoutGoPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -295,6 +245,7 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         }
         Log.d("dataG", "dataG.get" + dateG.get(dateG.DAY_OF_WEEK));
         Log.d("dataG", "mCurrentDayOfWeek" + mCurrentDayOfWeek);
+
         updateTimeTable();
 
 
@@ -316,8 +267,10 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
      * Обновление содержимого таблицы с учетом установления новой даты;
      */
     private void updateTimeTable() {
+        updateMode();
         pager.setCurrentItem(mCurrentDayOfWeek - 1);
         updateTextViewDate();
+        updateMode();
 //        if (mWeek.isNumerator() == Week.isDateNumerator(mDate, mFirstDayOfSemester, mIsFirstDayNumerator)) {
 //            pager.setCurrentItem(mCurrentDayOfWeek - 1);
 //            updateTextViewDate();
@@ -374,6 +327,20 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         mDate = c.getTime();
         updateDayOfWeek();
         updateTimeTable();
+    }
+
+    public static boolean isDateInCurrentSemester(){
+        if ((mDate.compareTo(mFirstDayOfSemester) < 0) ||
+                (mDate.compareTo(mLastDayOfSemester) > 0)) {
+            return false;
+        }
+        return true;
+    }
+
+    private static void updateMode(){
+        isDateInSemester = !((mDate.compareTo(mFirstDayOfSemester) < 0) ||
+                (mDate.compareTo(mLastDayOfSemester) > 0));
+
     }
 
 
