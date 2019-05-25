@@ -1,14 +1,23 @@
 package com.example.rsreu_app;
 
+import android.annotation.SuppressLint;
+import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -36,11 +45,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap = googleMap;// Add a marker in Sydney and move the camera
+        LatLng rsreu = new LatLng(54.613498, 39.723995);
+        mMap.addMarker(new MarkerOptions().position(rsreu).title("РГРТУ"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(rsreu,16));
+        mMap.setMaxZoomPreference(17);
+        mMap.setMinZoomPreference(7);
+        mMap.setBuildingsEnabled(true);
     }
 }

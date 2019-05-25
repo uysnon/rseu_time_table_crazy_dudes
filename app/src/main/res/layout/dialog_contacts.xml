@@ -67,16 +67,6 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:text="@string/how_to"
-                android:fontFamily="@font/pt_sans_bold"
-                android:textColor="@color/colorDarkBlue"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
                 android:text="@string/phone_number"
                 android:fontFamily="@font/pt_sans_bold"
                 android:textColor="@color/colorDarkBlue"/>
@@ -98,7 +88,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:text="1) От моего текущего местоположения:"
+                android:text="Местоположение РГРТУ на карте:"
                 android:fontFamily="@font/pt_sans_regular"
                 android:textColor="@color/colorDarkBlue"/>
 
@@ -110,7 +100,7 @@
                 android:background="@color/colorDarkBlue"
                 android:fontFamily="@font/pt_sans_bold"
                 android:gravity="center"
-                android:text="  Проложить маршрут  "
+                android:text="  Открыть карту  "
                 android:textColor="@color/colorWhite" />
 
             <TextView
@@ -119,7 +109,17 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:text="2) От ж/д вокзала Рязань-I:"
+                android:text="@string/how_to"
+                android:fontFamily="@font/pt_sans_bold"
+                android:textColor="@color/colorDarkBlue"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="1) От ж/д вокзала Рязань-I:"
                 android:fontFamily="@font/pt_sans_regular"
                 android:textColor="@color/colorDarkBlue"/>
 
@@ -139,7 +139,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:text="3) От ж/д вокзала Рязань-II:"
+                android:text="2) От ж/д вокзала Рязань-II:"
                 android:fontFamily="@font/pt_sans_regular"
                 android:textColor="@color/colorDarkBlue"/>
 
@@ -160,7 +160,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:text="4) От а/в Центральный:"
+                android:text="3) От а/в Центральный:"
                 android:fontFamily="@font/pt_sans_regular"
                 android:textColor="@color/colorDarkBlue"/>
 
@@ -180,7 +180,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:text="5) От а/в Приокский:"
+                android:text="4) От а/в Приокский:"
                 android:fontFamily="@font/pt_sans_regular"
                 android:textColor="@color/colorDarkBlue"/>
 
