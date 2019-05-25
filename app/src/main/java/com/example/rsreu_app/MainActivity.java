@@ -37,6 +37,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.muddzdev.styleabletoastlibrary.StyleableToast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -294,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
 
                                                         bottomNavigationView.setSelectedItemId(R.id.nav_schedule);
                                                     } else {
-                                                        Toast.makeText(getApplicationContext(), "Все же необходим Интернет для обновления информации. ", Toast.LENGTH_SHORT).show();
+                                                        StyleableToast.makeText(getApplicationContext(),"Все же необходим Интернет для обновления информации. ",R.style.NotificationToast).show();
                                                         showAlertDialog();
                                                     }
                                                 }
@@ -328,7 +329,8 @@ public class MainActivity extends AppCompatActivity {
                                             ScheduleFragment.newInstance()).commit();
 
                                 }else{
-                                    Toast.makeText(getApplicationContext(),"Необходим Интернет или вернитесь назад",Toast.LENGTH_SHORT).show();
+
+                                    StyleableToast.makeText(getApplicationContext(),"Необходим интернет для продолжения",R.style.NotificationToast).show();
                                     groupNumber.setText(sharedPreferences.getString(groupKey,null));
                                     showAlertDialog();
                                 }
@@ -340,10 +342,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }else{
                         if (isFirstLaunch) {
-                            Toast.makeText(getApplicationContext(), "Поле не может быть пустым", Toast.LENGTH_SHORT).show();
+                            StyleableToast.makeText(getApplicationContext(),"Поле не может быть пустым",R.style.NotificationToast).show();
                             showAlertDialog();
                         } else{
-                            Toast.makeText(getApplicationContext(),"Введите группу или вернитесь назад",Toast.LENGTH_SHORT).show();
+                            StyleableToast.makeText(getApplicationContext(),"Введите группу или вернитесь назад",R.style.NotificationToast).show();
                             groupNumber.setText(sharedPreferences.getString(groupKey,null));
                             showAlertDialog();
                         }
@@ -479,13 +481,14 @@ public class MainActivity extends AppCompatActivity {
                     groupNumber.setText(sharedPreferences.getString(groupKey, ""));
 
                     if(isNetworkAvailable()){
-                        Toast.makeText(getApplicationContext(),"Сервер временно недоступен или группа не найдена",Toast.LENGTH_SHORT).show();
+                        StyleableToast.makeText(getApplicationContext(),"Сервер временно недоступен или группа не найдена",R.style.NotificationToast).show();
                         showAlertDialog();
                     }
                     Log.d("myLogs3","HERE6");
                 } else{
                     Log.d("myLogs3","HERE5");
-                    Toast.makeText(getApplicationContext(),"Сервер временно недоступен или группа не найдена",Toast.LENGTH_SHORT).show();
+
+                    StyleableToast.makeText(getApplicationContext(),"Сервер временно недоступен или группа не найдена",R.style.NotificationToast).show();
                     groupNumber.setText("");
                     showAlertDialog();
                 }
