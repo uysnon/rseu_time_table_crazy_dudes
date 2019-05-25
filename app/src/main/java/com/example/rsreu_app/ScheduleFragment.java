@@ -270,7 +270,7 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         updateMode();
         pager.setCurrentItem(mCurrentDayOfWeek - 1);
         updateTextViewDate();
-        updateMode();
+
 //        if (mWeek.isNumerator() == Week.isDateNumerator(mDate, mFirstDayOfSemester, mIsFirstDayNumerator)) {
 //            pager.setCurrentItem(mCurrentDayOfWeek - 1);
 //            updateTextViewDate();

@@ -12,4 +12,15 @@
     <item name="colorControlHighlight">@color/colorWhite</item>
     </style>
 
+    <style name="NotificationToast">
+        <item name="android:fontFamily">@font/pt_sans_bold</item>
+        <item name="colorBackground">@color/colorDarkBlue</item>
+        <item name="textColor">@color/colorWhite</item>
+        <item name="iconLeft">@drawable/ic_warning</item>
+        <item name="strokeColor">#ffffff</item>
+        <item name="strokeWidth">3dp</item>
+        <item name="length">LONG</item>
+        <!--<item name="cornerRadius">3dp</item>-->
+    </style>
+
 </resources>
