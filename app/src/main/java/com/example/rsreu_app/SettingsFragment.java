@@ -20,6 +20,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+
 public class SettingsFragment extends Fragment {
 
     ListView listView;
@@ -49,12 +52,18 @@ public class SettingsFragment extends Fragment {
                     mBuilder.setCancelable(true);
                     View mView = getLayoutInflater().inflate(R.layout.dialog_contacts,null);
                     Button mButton = mView.findViewById(R.id.build_way);
+                    Context context = getContext();
                     Intent intent = new Intent(getActivity(),MapsActivity.class);
                     mButton.setOnClickListener(new View.OnClickListener() {
 
                         @Override
                         public void onClick(View v) {
-                           startActivity(intent);
+
+                            if(isGooglePlayServicesAvailable(context)) {
+                                startActivity(intent);
+                            } else{
+                                Toast.makeText(context,"Google Play Services недоступны.",Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
                     mBuilder.setView(mView);
@@ -123,6 +132,12 @@ public class SettingsFragment extends Fragment {
             return row;
         }
 
+    }
+
+    public boolean isGooglePlayServicesAvailable(Context context){
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = googleApiAvailability.isGooglePlayServicesAvailable(context);
+        return resultCode == ConnectionResult.SUCCESS;
     }
 
 

@@ -99,15 +99,14 @@ public class MainActivity extends AppCompatActivity {
         Log.d("myLogs3Bool",String.valueOf(updateIsRequired));
 
 
-        if(oldDataFound){
-            ableToUpdate = !ableToUpdate;
-        }
-
         if(ableToUpdate){
             oldDataFound = !oldDataFound;
         }
 
-        Context context = getApplicationContext();
+/*        oldDataFound = false;
+        ableToUpdate = false;
+        updateIsRequired = true;*/
+
 
         Log.d("myLogs3BoolNew",String.valueOf(oldDataFound));
         Log.d("myLogs3BoolNew",String.valueOf(ableToUpdate));
@@ -121,45 +120,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
 
+                    showOldDataFoundDialog();
 
-                    /*AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-                    mBuilder.setCancelable(true);
-                    View mView = getLayoutInflater().inflate(R.layout.old_data,null);
-                    CheckBox checkBox = mView.findViewById(R.id.oldCheck);
-                    ImageView imageView = mView.findViewById(R.id.krestOld);
-                    AlertDialog dialog = mBuilder.create();
-                    Log.d("myLogs3","here");
-                    dialog.show();
-
-                    imageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            boolean isChecked;
-                            isChecked = checkBox.isChecked();
-                            if(isChecked){
-                                SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
-                                editor.putBoolean("oldDataFound", false);
-                                editor.apply();
-                                notifSign.setVisibility(View.INVISIBLE);
-                            }
-                            dialog.dismiss();
-                        }
-                    });
-
-                    dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            boolean isChecked;
-                            isChecked = checkBox.isChecked();
-                            if(isChecked){
-                                SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
-                                editor.putBoolean("oldDataFound", false);
-                                editor.apply();
-                                notifSign.setVisibility(View.INVISIBLE);
-                            }
-                        }
-                    });
-*/
                 }
             });
         }
@@ -174,8 +136,8 @@ public class MainActivity extends AppCompatActivity {
             bell.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //inflater.inflate
 
+                    showAbleToUpdateDialog();
 
                 }
             });
@@ -189,21 +151,8 @@ public class MainActivity extends AppCompatActivity {
             bell.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //inflater.inflate
-                    Button button = findViewById(R.id.tryToChange);
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v){
-                            if(!isNetworkAvailable()){
-                                Toast.makeText(getApplicationContext(),"Включите интернет",Toast.LENGTH_SHORT);
-                            }else{
-                                jsonParse(sharedPreferences.getString("groupKey",null));
-                                //убрать отображение
-                            }
 
-
-                        }
-                    });
+                    showUpdateIsRequiredDialog();
 
                 }
             });
@@ -494,7 +443,6 @@ public class MainActivity extends AppCompatActivity {
                         teachers = denominator.getString("teachers");
                         room = denominator.getString("room");
                         build = denominator.getString("build");
-                        //date pattern dd.MM парсить строку до запятой и пихнуть в массив дату, и так пока видим запятые
                         dates = denominator.getString("dates");
 
                         isInserted = myDB.insertDataSchedule(Integer.valueOf(groupNumberUrl),weekDay,timeId,duration,optional,title,type,teachers,room,build,dates, weekBool);
@@ -558,9 +506,99 @@ public class MainActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 
+    public void showOldDataFoundDialog(){
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+
+        mBuilder.setCancelable(false);
+        View mView = getLayoutInflater().inflate(R.layout.old_data,null);
+        CheckBox checkBox = mView.findViewById(R.id.oldCheck);
+
+        mBuilder.setView(mView);
+
+        mBuilder.setNegativeButton("Закрыть", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                boolean isChecked;
+                isChecked = checkBox.isChecked();
+                if(isChecked){
+                    SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
+                    editor.putBoolean("oldDataFound", false);
+                    editor.apply();
+                    notifSign.setVisibility(View.INVISIBLE);
+                }
+                dialog.cancel();
+            }
+        });
 
 
+        AlertDialog dialog = mBuilder.create();
+        Log.d("myLogs3","here");
+        dialog.show();
 
+    }
+
+
+    public void showAbleToUpdateDialog(){
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+
+        mBuilder.setCancelable(false);
+        View mView = getLayoutInflater().inflate(R.layout.ableupdate,null);
+
+        mBuilder.setView(mView);
+
+        mBuilder.setPositiveButton("Хорошо", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
+                editor.putBoolean("ableToUpdate", false);
+                editor.apply();
+                notifSign.setVisibility(View.INVISIBLE);
+                dialog.cancel();
+            }
+        });
+
+
+        AlertDialog dialog = mBuilder.create();
+        Log.d("myLogs3","here");
+        dialog.show();
+
+    }
+
+
+    public void showUpdateIsRequiredDialog(){
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+
+        mBuilder.setCancelable(false);
+        View mView = getLayoutInflater().inflate(R.layout.updaterequired,null);
+
+        mBuilder.setView(mView);
+
+        mBuilder.setPositiveButton("Хорошо", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                if(!isNetworkAvailable()){
+                    Toast.makeText(getApplicationContext(),"Включите интернет",Toast.LENGTH_SHORT).show();
+                }else{
+                    jsonParse(sharedPreferences.getString("groupKey",null));
+                    SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
+                    editor.putBoolean("updateIsRequired", false);
+                    editor.putBoolean("ableToUpdate",true);
+                    editor.apply();
+                    notifSign.setVisibility(View.INVISIBLE);
+                    dialog.cancel();
+
+                }
+            }
+        });
+
+
+        AlertDialog dialog = mBuilder.create();
+        Log.d("myLogs3","here");
+        dialog.show();
+
+    }
 
 
 }
