@@ -188,13 +188,14 @@ public class PageFragment extends Fragment {
         for (int i = 0; i < mDay.getLessons().size(); i++) {
             Lesson lesson = mDay.getLessons().get(i);
             content[index++] = lesson.getTimeFromTimeId(getActivity());
-            content[index++] = lesson.getTitle();
-            content[index++] = lesson.getRoom();
-            content[index] = "";
-            for (int j = 0; j < lesson.getTeachers().size(); j++) {
-                content[index] = content[index] + lesson.getTeachers().get(j);
+            content[index++] = lesson.getTitleTypeOptional();
+            content[index++] = lesson.getRoomBuilding();
+            if (lesson.getTeachers().equals("")){
+                content[index++] = " ";
+            } else {
+                content[index++] = lesson.getTeachers();
             }
-            index++;
+
 
         }
         return content;

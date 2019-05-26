@@ -13,7 +13,7 @@
     </style>
 
     <style name="NotificationToast">
-        <item name="android:fontFamily">@font/pt_sans_bold</item>
+        <item name="fontFamily">@font/pt_sans_bold</item>
         <item name="colorBackground">@color/colorDarkBlue</item>
         <item name="textColor">@color/colorWhite</item>
         <item name="iconLeft">@drawable/ic_warning</item>

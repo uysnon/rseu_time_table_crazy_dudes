@@ -38,6 +38,7 @@ import java.util.GregorianCalendar;
 public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
 
     private static final String DATE_KEY = "day_key";
+    public static final String APP_PREFERENCES_DATE = "Date_preference";
 
     MyPager pager;
     DoubleWeek mDoubleWeek;
@@ -57,7 +58,7 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
     private LinearLayout mLinearLayoutShareSchedule;
     private ImageView mImageShareSchedule;
     private TextView mTextShareSchedule;
-
+    private SharedPreferences mSharedPreferencesDate;
 
     /**
      * Выбранный (текущий по умолчанию) день недели
@@ -69,6 +70,7 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
     private MyPageAdapter mPageAdapter;
 
 
+
     public static ScheduleFragment newInstance() {
         ScheduleFragment fragment = new ScheduleFragment();
         Bundle bundle = new Bundle();
@@ -77,12 +79,19 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         return fragment;
     }
 
+    @Override
+    public void onPause() {
+        updateSharedPreferencesDate();
+        super.onPause();
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d("lifecycle","onCreateView");
         View view = inflater.inflate(R.layout.fragment_schedule, container, false);
+        mSharedPreferencesDate = getActivity().getSharedPreferences(MainActivity.myPreference, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mSharedPreferencesDate.edit();
         mLayoutGoNext = view.findViewById(R.id.layoutGoNext);
         mLayoutGoPrev = view.findViewById(R.id.layoutGoPrevious);
         mLayoutDatePicker = view.findViewById(R.id.layout_datePicker);
@@ -95,7 +104,11 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         mTextShareSchedule = view.findViewById(R.id.text_share_schedule);
         pager = view.findViewById(R.id.pager);
         mDatabaseHelper = new DatabaseHelper(getActivity());
-        mDate = new Date();
+        if (mSharedPreferencesDate.contains(APP_PREFERENCES_DATE)){
+            mDate = new Date(mSharedPreferencesDate.getLong(APP_PREFERENCES_DATE, 0));
+        } else {
+            mDate = new Date();
+        }
         /*
         Покачто данные взяты "с воздуха", далее должны быть заменены взтыми из бд
          */
@@ -342,6 +355,13 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
                 (mDate.compareTo(mLastDayOfSemester) > 0));
 
     }
+
+    private void updateSharedPreferencesDate(){
+        SharedPreferences.Editor editor = mSharedPreferencesDate.edit();
+        editor.putLong(APP_PREFERENCES_DATE, mDate.getTime());
+        editor.apply();
+    }
+
 
 
 }

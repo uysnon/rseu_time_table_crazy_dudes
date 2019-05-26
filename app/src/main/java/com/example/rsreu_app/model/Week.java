@@ -82,8 +82,7 @@ public class Week implements Serializable {
                     String title = c.getString(c.getColumnIndex("title"));
                     String type = c.getString(c.getColumnIndex("type"));
                     boolean optional = (1 == c.getInt(c.getColumnIndex("optional")));
-                    ArrayList<String> teachers = new ArrayList<>();
-                    teachers.add(c.getString(c.getColumnIndex("teachers")));
+                    String teachers = c.getString(c.getColumnIndex("teachers"));
                     Integer duration = c.getInt(c.getColumnIndex("duration"));
                     String room = c.getString(c.getColumnIndex("room"));
                     String build = c.getString(c.getColumnIndex("build"));

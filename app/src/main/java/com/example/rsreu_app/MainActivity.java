@@ -9,6 +9,7 @@ import android.icu.util.Freezable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.PersistableBundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -67,6 +68,15 @@ public class MainActivity extends AppCompatActivity {
     ImageView bell;
     BottomNavigationView bottomNavigationView;
 
+    @Override
+    protected void onStart() {
+        SharedPreferences sharedPreferences = getSharedPreferences(myPreference, Context.MODE_PRIVATE );
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Date date = new Date();
+        editor.putLong(ScheduleFragment.APP_PREFERENCES_DATE, date.getTime());
+        editor.apply();
+        super.onStart();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

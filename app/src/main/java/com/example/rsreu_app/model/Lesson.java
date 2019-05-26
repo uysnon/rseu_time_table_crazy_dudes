@@ -9,13 +9,30 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Lesson implements Serializable {
+    private static final String FULL_NAME_LECTURE = "Лекция";
+    private static final String FULL_NAME_PRACTICAL = "Практическое занятие";
+    private static final String FULL_NAME_LW = "Лабораторная работа";
+    private static final String BRIEF_NAME_LECTURE = "лк";
+    private static final String BRIEF_NAME_PRACTICAL = "пз";
+    private static final String BRIEF_NAME_LW = "лб";
+    private static final String FULL_NAME_MILITARY_TRAINING = "ВОЕННАЯ ПОДГОТОВКА";
+    private static final String FULL_NAME_MILITARY_PE = "ФИЗИЧЕСКАЯ КУЛЬТУРА";
+    private static final String FULL_NAME_OPTIONAL = "по выбору";
+    private static final String FULL_NAME_MAIN_BUILDING = "Главный корпус";
+    private static final String BRIEF_NAME_MAIN_BUILDING = "";
+    private static final String FULL_NAME_LABORATORY_BUILDING = "Лабораторный корпус";
+    private static final String BRIEF_NAME_LABORATORY_BUILDING = "л.к.";
+    private static final String FULL_NAME_BUSINESS_INCUBATOR = "Бизнес инкубатор";
+    private static final String BRIEF_NAME_BUSINESS_INCUBATOR = "б.и.";
+
 
     private int timeId;
     private int duration;
     private String title;
     private String type;
+
     private boolean optional;
-    private ArrayList<String> teachers;
+    private String teachers;
     private String room;
     private String build;
     private String dates;
@@ -26,7 +43,7 @@ public class Lesson implements Serializable {
             String title,
             String type,
             boolean optional,
-            ArrayList<String> teachers,
+            String teachers,
             String room,
             String build,
             String dates) {
@@ -63,7 +80,8 @@ public class Lesson implements Serializable {
         return optional;
     }
 
-    public ArrayList<String> getTeachers() {
+    public String  getTeachers()
+    {
         return teachers;
     }
 
@@ -100,7 +118,7 @@ public class Lesson implements Serializable {
         this.optional = optional;
     }
 
-    public void setTeachers(ArrayList<String> teachers) {
+    public void setTeachers(String teachers) {
         this.teachers = teachers;
     }
 
@@ -116,6 +134,51 @@ public class Lesson implements Serializable {
         this.dates = dates;
     }
 
+    public String getTitleTypeOptional() {
+        String result = "";
+        result = result + this.title;
+        if (!(this.title.equals(FULL_NAME_MILITARY_TRAINING)||(this.title.equals(FULL_NAME_MILITARY_PE)))){
+            result = result + " (" + getBriefType() + getOptionalType() + ")";
+        }
+        return result;
+    }
+
+    public String getRoomBuilding() {
+        String result = "";
+        result = result + this.room;
+        if (!result.equals("")) {
+            if (!getBriefBuild().equals("")) {
+                result = result + " (" + getBriefBuild() + ")";
+            }
+        } else  result = getBriefBuild();
+        return result;
+    }
+
+
+    private String getBriefType() {
+        switch (this.type) {
+            case (FULL_NAME_LECTURE): return BRIEF_NAME_LECTURE;
+            case (FULL_NAME_LW) : return BRIEF_NAME_LW;
+            case (FULL_NAME_PRACTICAL) : return BRIEF_NAME_PRACTICAL;
+            default: return this.type;
+        }
+    }
+
+
+    private String getBriefBuild() {
+        switch (this.build) {
+            case (FULL_NAME_MAIN_BUILDING): return BRIEF_NAME_MAIN_BUILDING;
+            case (FULL_NAME_LABORATORY_BUILDING) : return BRIEF_NAME_LABORATORY_BUILDING;
+            case (FULL_NAME_BUSINESS_INCUBATOR) : return BRIEF_NAME_BUSINESS_INCUBATOR;
+            default: return this.build;
+        }
+    }
+
+    private String getOptionalType() {
+        if (this.optional) return FULL_NAME_OPTIONAL;
+        return "";
+    }
+
     /**
      * Метод для получение время проведения пары в виде строки
      * из поля timeId,
@@ -125,46 +188,41 @@ public class Lesson implements Serializable {
      */
     public String getTimeFromTimeId(Context context) {
 
-        Cursor cursor = null;
+
         DatabaseHelper myDB = new DatabaseHelper(context);
         if (this.timeId >= 0) {
-            cursor = myDB.getLessonTime(this.timeId);
-            if (cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                return getTimeLesson(
-                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.FROM_TIME_LESSON)),
-                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.TO_TIME_LESSON))
-                );
+            if ((this.duration == 2) || (this.timeId == 9)) {
+                Cursor cursor = null;
+                cursor = myDB.getLessonTime(this.timeId);
+                if (cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    return getTimeLesson(
+                            cursor.getString(cursor.getColumnIndex(DatabaseHelper.FROM_TIME_LESSON)),
+                            cursor.getString(cursor.getColumnIndex(DatabaseHelper.TO_TIME_LESSON))
+                    );
+                }
+            } else {
+                if (this.duration >= 2) {
+                    Cursor cursorStart = null;
+                    Cursor cursorEnd = null;
+                    cursorStart = myDB.getLessonTime(this.timeId);
+                    cursorEnd = myDB.getLessonTime(this.timeId + (this.duration / 2 - 1));
+                    if ((cursorStart.getCount() > 0) && (cursorEnd.getCount() > 0)) {
+                        cursorStart.moveToFirst();
+                        cursorEnd.moveToFirst();
+                        return getTimeLesson(
+                                cursorStart.getString(cursorStart.getColumnIndex(DatabaseHelper.FROM_TIME_LESSON)),
+                                cursorEnd.getString(cursorEnd.getColumnIndex(DatabaseHelper.TO_TIME_LESSON))
+                        );
+                    }
+                }
             }
         }
         return "";
 
-
-//        switch (this.timeId) {
-//            case (1):
-//                return "8:10 - 9:45";
-//            case (2):
-//                return "9:55 - 11:30";
-//            case (3):
-//                return "11:40 - 13:15";
-//            case (4):
-//                return "13:35 - 15:10";
-//            case (5):
-//                return "15:20 - 17:05";
-//            case (6):
-//                return "17:05 - 18:40";
-//            case (7):
-//                return "18:50 - 20:15";
-//            case (8):
-//                return "20:25 - 21:30";
-//            case (9):
-//                return "09:00 - 17:00";
-//            default:
-//                return "не помню какая пара уже";
-//        }
     }
 
     private static String getTimeLesson(String from, String to) {
-        return (from + " - " + to);
+        return (from + "\n - \n" + to);
     }
 }
