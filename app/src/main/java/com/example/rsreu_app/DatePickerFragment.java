@@ -33,7 +33,6 @@ public class DatePickerFragment extends DialogFragment {
         int day = Integer.valueOf((String)DateFormat.format("dd", mDate));
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 getActivity(),
-                AlertDialog.THEME_DEVICE_DEFAULT_LIGHT,
                 (DatePickerDialog.OnDateSetListener)getTargetFragment(),
                 year,
                 month,
