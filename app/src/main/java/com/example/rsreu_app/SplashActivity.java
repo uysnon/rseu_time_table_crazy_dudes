@@ -45,6 +45,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import com.muddzdev.styleabletoastlibrary.StyleableToast;
 
 import static java.lang.Thread.sleep;
 
@@ -83,7 +84,7 @@ public class SplashActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 if (msg.what == 1){
-                    Toast.makeText(getApplicationContext(),"Необходим Интернет для первого запуска приложения",Toast.LENGTH_LONG).show();
+                    StyleableToast.makeText(getApplicationContext(),"Необходим интернет для первого запуска приложения",R.style.NotificationToast).show();
                     if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
                         finishAndRemoveTask();
                     } else{
@@ -159,12 +160,10 @@ public class SplashActivity extends AppCompatActivity {
                             c.close();
                             SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
                             try{
-                                SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
                                 Date date = sdf.parse(endDate);
                                 long mills = date.getTime();
-                                Log.d("myLogs2FirstData",String.valueOf(mills));
-                                editor.putLong("endTime", mills);
-                                editor.apply();
+                                getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit().putLong("endDate",mills).commit();
+                                Log.d("myLogs2",String.valueOf(sharedPreferences.getLong("endDate",0)));
                             }catch (ParseException e){
                                 e.printStackTrace();
                             }
@@ -173,6 +172,7 @@ public class SplashActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
 
+                        SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
                         long currentDate = System.currentTimeMillis();
                         long endDateLong = sharedPreferences.getLong("endTime",0);
                         long halfOfSemester = endDateLong - 4665600000L;
@@ -211,20 +211,30 @@ public class SplashActivity extends AppCompatActivity {
                                       Date date = sdf.parse(endDate);
                                       long mills = date.getTime();
 
-
-
                                       long oldDate = sharedPreferences.getLong("endDate",0);
                                       Log.d("myLogs2Old",String.valueOf(oldDate));
                                       Log.d("myLogs2Mills",String.valueOf(mills));
                                       if(mills == oldDate){
-                                          editor.putBoolean("oldDataFound", true);
+                                          if(sharedPreferences.contains("oldDataFound") && !sharedPreferences.getBoolean("oldDataFound",true)){
+                                              editor.putBoolean("ableToUpdate",false);
+                                              editor.putBoolean("oldDataFound",false);
+                                          }else {
+                                              editor.putBoolean("oldDataFound", true);
+                                              editor.putBoolean("ableToUpdate", false);
+                                          }
                                           Log.d("myLogs2","HERE6") ;
                                           editor.apply();
-                                      }else{
+                                      }else if (mills > oldDate){
                                           Log.d("myLogs2","HERE7") ;
-                                          editor.putBoolean("ableToUpdate", true);
-                                          editor.putLong("endDate",mills);
-                                          editor.apply();
+                                            if(sharedPreferences.contains("ableToUpdate") && !sharedPreferences.getBoolean("ableToUpdate",true)){
+                                                  editor.putBoolean("ableToUpdate",false);
+                                                  editor.putBoolean("oldDataFound",false);
+                                              }else{
+                                                editor.putBoolean("ableToUpdate", true);
+                                                editor.putBoolean("oldDataFound", false);
+                                            }
+                                         editor.putLong("endDate",mills);
+                                         editor.apply();
                                       }
                                   }catch (ParseException e){
                                       e.printStackTrace();
@@ -233,9 +243,12 @@ public class SplashActivity extends AppCompatActivity {
                                   e.printStackTrace();
                               }
                             }else{
-                                editor.putBoolean("isUpdateRequired",true);
-                                editor.apply();
-
+                                if(sharedPreferences.contains("isUpdateRequired") && !sharedPreferences.getBoolean("isUpdateRequired",true)){
+                                   editor.putBoolean("isUpdateRequired", false);
+                                }else {
+                                    editor.putBoolean("isUpdateRequired", true);
+                                    editor.apply();
+                                }
 
                             }
 

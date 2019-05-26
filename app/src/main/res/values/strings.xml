@@ -6,6 +6,7 @@
     <string name="message_date_schedule">Расписание на</string>
     <string name="title_activity_maps">Map</string>
     <string name="message_no_lessons">Нет занятий. Выходной день.</string>
+    <string name="message_write_group">Введите номер группы</string>
     <string name="message_not_date_from_semester">Выбрана дата, которая не относится к текущему семестру</string>
 
 

@@ -99,20 +99,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("myLogs3Bool",String.valueOf(ableToUpdate));
         Log.d("myLogs3Bool",String.valueOf(updateIsRequired));
 
-
-        if(ableToUpdate){
-            oldDataFound = !oldDataFound;
-        }
-
-/*        oldDataFound = false;
-        ableToUpdate = false;
-        updateIsRequired = true;*/
-
-
-        Log.d("myLogs3BoolNew",String.valueOf(oldDataFound));
-        Log.d("myLogs3BoolNew",String.valueOf(ableToUpdate));
-        Log.d("myLogs3BoolNew",String.valueOf(updateIsRequired));
-
         if(oldDataFound){
             notifSign.setVisibility(View.VISIBLE);
             bell.bringToFront();
@@ -162,10 +148,8 @@ public class MainActivity extends AppCompatActivity {
 
         if(!hasGroup){
             showAlertDialog();
-            Log.d("myLogs3FirstLaunch",String.valueOf(sharedPreferences.getBoolean("isFirstLaunch",false)));
         }else{
             groupNumber.setText(sharedPreferences.getString(groupKey,null));
-            Log.d("myLogs3FirstLaunch","HEERR");
         }
 
         groupNumber.setOnClickListener(new View.OnClickListener() {
@@ -209,11 +193,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void showAlertDialog(){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-        alertDialog.setTitle("Группа");
-        alertDialog.setIcon(R.drawable.ic_users);
-        EditText edittext = new EditText(getApplicationContext());
-        edittext.setInputType(InputType.TYPE_CLASS_NUMBER);
-        alertDialog.setView(edittext);
+
+        View mView = getLayoutInflater().inflate(R.layout.dialog_group,null);
+        EditText edittext = mView.findViewById(R.id.usergroup);
+        alertDialog.setView(mView);
 
         sharedPreferences = getSharedPreferences(myPreference, Context.MODE_PRIVATE);
 
@@ -235,15 +218,10 @@ public class MainActivity extends AppCompatActivity {
                             if(isNetworkAvailable()) {
                                 mQueue = Volley.newRequestQueue(getApplicationContext());
                                 jsonParse(editTextValue);
-                                //sharedPreferences.edit().putBoolean("isFirstLaunch", false).apply();
-            /*                    SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
-                                editor.putString(groupKey, editTextValue);
-                                editor.apply();*/
                                 Log.d("myLogs3","HERE1");
-
                                 bottomNavigationView.setSelectedItemId(R.id.nav_schedule);
                             }else{
-                                Toast.makeText(getApplicationContext(), "Необходим Интернет для первого запуска приложения", Toast.LENGTH_SHORT).show();
+                                StyleableToast.makeText(getApplicationContext(),"Необходим интернет для первого запуска приложения",R.style.NotificationToast).show();
                                 Log.d("myLogs3","HERE4");
                                 showAlertDialog();
                             }
@@ -251,9 +229,7 @@ public class MainActivity extends AppCompatActivity {
                             Cursor c;
                             try{
                                 c = myDB.getGroupCreateTime(Integer.parseInt(editTextValue));
-
                                 Log.d("myLogs3", String.valueOf(c.getCount()));
-
                                 if(c.getCount() == 0){
                                     Log.d("myLogs3","HEREyes");
                                     mQueue = Volley.newRequestQueue(getApplicationContext());
@@ -266,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
                                         bottomNavigationView.setSelectedItemId(R.id.nav_schedule);
                                     } else {
                                         if (isNetworkAvailable()) {
-                                            Log.d("myLogs3","HEREREEE");
+                                            Log.d("myLogs3","HEREEE");
                                             myDB.deleteGroup(Integer.parseInt(editTextValue));
                                             mQueue = Volley.newRequestQueue(getApplicationContext());
                                             jsonParse(editTextValue);
@@ -280,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
                                             AlertDialog.Builder updateDialog = new AlertDialog.Builder(MainActivity.this);
                                             updateDialog.setTitle("Группа");
                                             updateDialog.setIcon(R.drawable.ic_users);
-                                            updateDialog.setMessage("Вы уже вводили данную группу ранее, но инфо о ней устарела. Нужен Интернет. Обновить?");
+                                            updateDialog.setMessage("Вы уже вводили данную группу ранее, но инфо о ней устарела. Нужен интернет. Обновить?");
                                             updateDialog.setCancelable(false);
                                             updateDialog.setPositiveButton("Да", new DialogInterface.OnClickListener() {
                                                 @Override
@@ -295,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
 
                                                         bottomNavigationView.setSelectedItemId(R.id.nav_schedule);
                                                     } else {
-                                                        StyleableToast.makeText(getApplicationContext(),"Все же необходим Интернет для обновления информации. ",R.style.NotificationToast).show();
+                                                        StyleableToast.makeText(getApplicationContext(),"Все же необходим интернет для обновления информации. ",R.style.NotificationToast).show();
                                                         showAlertDialog();
                                                     }
                                                 }
@@ -322,9 +298,6 @@ public class MainActivity extends AppCompatActivity {
                                     Log.d("myLogs3","HERE10");
                                     mQueue = Volley.newRequestQueue(getApplicationContext());
                                     jsonParse(editTextValue);
-                                   /* SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
-                                    editor.putString(groupKey, editTextValue);
-                                    editor.apply();*/
                                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                                             ScheduleFragment.newInstance()).commit();
 
@@ -457,14 +430,13 @@ public class MainActivity extends AppCompatActivity {
                     myDB.close();
 
                     groupNumber.setText(groupNumberUrl);
-                    Log.d("UPDATE_SHARED_PR", "update group number in sp");
 
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     if (sharedPreferences.getBoolean("isFirstLaunch",false)){
-                        editor.putBoolean("isFirstLaunch",false);
+                        editor.putBoolean("isFirstLaunch", false);
                         Log.d("myLogs3","HERE2");
                     }
-                    editor.putString(groupKey,groupNumberUrl);
+                    editor.putString(groupKey, groupNumberUrl);
                     editor.apply();
 
                 }catch (JSONException e){
@@ -528,6 +500,8 @@ public class MainActivity extends AppCompatActivity {
                     editor.putBoolean("oldDataFound", false);
                     editor.apply();
                     notifSign.setVisibility(View.INVISIBLE);
+                    bell.setEnabled(false);
+                    bell.setOnClickListener(null);
                 }
                 dialog.cancel();
             }
@@ -557,6 +531,8 @@ public class MainActivity extends AppCompatActivity {
                 editor.putBoolean("ableToUpdate", false);
                 editor.apply();
                 notifSign.setVisibility(View.INVISIBLE);
+                bell.setOnClickListener(null);
+                bell.setEnabled(false);
                 dialog.cancel();
             }
         });
@@ -582,7 +558,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
 
                 if(!isNetworkAvailable()){
-                    Toast.makeText(getApplicationContext(),"Включите интернет",Toast.LENGTH_SHORT).show();
+                    StyleableToast.makeText(getApplicationContext(),"Включите интернет",R.style.NotificationToast).show();
                 }else{
                     jsonParse(sharedPreferences.getString("groupKey",null));
                     SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
@@ -590,6 +566,8 @@ public class MainActivity extends AppCompatActivity {
                     editor.putBoolean("ableToUpdate",true);
                     editor.apply();
                     notifSign.setVisibility(View.INVISIBLE);
+                    bell.setEnabled(false);
+                    bell.setOnClickListener(null);
                     dialog.cancel();
 
                 }
