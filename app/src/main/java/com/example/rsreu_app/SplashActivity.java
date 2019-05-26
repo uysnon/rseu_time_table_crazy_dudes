@@ -55,8 +55,10 @@ public class SplashActivity extends AppCompatActivity {
     DatabaseHelper myDB;
     public RequestQueue mQueue;
     public static final String myPreference = "myPref";
+    public static final String IS_FIRST_LAUNCH = "isFirstLaunch";
+    public static final String INET_FIRST_LAUNCH = "Необходим интернет для первого запуска приложения";
+    public static final String HAS_GROUP = "hasGroup";
     SharedPreferences sharedPreferences;
-    Boolean hasEndTime;
     String endDate;
     Handler mHandler;
 
@@ -70,8 +72,6 @@ public class SplashActivity extends AppCompatActivity {
         ImageView appImage;
         TextView appName;
 
-
-
         appImage = findViewById(R.id.imageView);
         appName = findViewById(R.id.appName);
 
@@ -84,7 +84,7 @@ public class SplashActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 if (msg.what == 1){
-                    StyleableToast.makeText(getApplicationContext(),"Необходим интернет для первого запуска приложения",R.style.NotificationToast).show();
+                    StyleableToast.makeText(getApplicationContext(),INET_FIRST_LAUNCH,R.style.NotificationToast).show();
                     if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
                         finishAndRemoveTask();
                     } else{
@@ -95,22 +95,20 @@ public class SplashActivity extends AppCompatActivity {
             }
         };
 
-        hasEndTime = sharedPreferences.contains("endTime");
 
         Cursor c;
         SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
-
         try{
             c = myDB.getAllDataGroups();
             int count = c.getCount();
             c.close();
             if (count == 0) {
-                editor.putBoolean("hasGroup", false);
-                editor.putBoolean("isFirstLaunch", true);
+                editor.putBoolean(HAS_GROUP, false);
+                editor.putBoolean(IS_FIRST_LAUNCH, true);
                 editor.apply();
             }else{
-                editor.putBoolean("hasGroup",true);
-                editor.putBoolean("isFirstLaunch",false);
+                editor.putBoolean(HAS_GROUP,true);
+                editor.putBoolean(IS_FIRST_LAUNCH,false);
                 editor.apply();
             }
 
@@ -118,8 +116,6 @@ public class SplashActivity extends AppCompatActivity {
             e.printStackTrace();
 
         }
-
-
 
         Intent intent = new Intent(this,MainActivity.class);
         Thread timer = new Thread(){
@@ -132,13 +128,10 @@ public class SplashActivity extends AppCompatActivity {
                     XmlParseNews();
                 }
 
-                hasGroup = sharedPreferences.getBoolean("hasGroup",false);
-                isFirstLaunch = sharedPreferences.getBoolean("isFirstLaunch",false);
+                hasGroup = sharedPreferences.getBoolean(HAS_GROUP,false);
+                isFirstLaunch = sharedPreferences.getBoolean(IS_FIRST_LAUNCH,false);
 
                 try {
-                    Log.d("hasGroup: ",Boolean.toString(hasGroup));
-                    Log.d("isFirstLaunch: ",Boolean.toString(isFirstLaunch));
-
                     if(!hasGroup && isFirstLaunch){
                         if(isNetworkAvailable()){
                             mQueue = Volley.newRequestQueue(getApplicationContext());
@@ -150,20 +143,17 @@ public class SplashActivity extends AppCompatActivity {
                             message.sendToTarget();
                         }
                     }else if(hasGroup && !isFirstLaunch){
-                        Log.d("myLogs2","HERE");
                         Cursor c;
                         try{
                             c = myDB.getAllDataSemester();
                             c.moveToLast();
                             endDate = c.getString(c.getColumnIndex("endDate"));
-                            Log.d("myLogs2","HERE2 " + endDate + c.getCount());
                             c.close();
                             SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
                             try{
                                 Date date = sdf.parse(endDate);
                                 long mills = date.getTime();
                                 getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit().putLong("endDate",mills).commit();
-                                Log.d("myLogs2",String.valueOf(sharedPreferences.getLong("endDate",0)));
                             }catch (ParseException e){
                                 e.printStackTrace();
                             }
@@ -174,23 +164,20 @@ public class SplashActivity extends AppCompatActivity {
 
                         SharedPreferences.Editor editor = getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit();
                         long currentDate = System.currentTimeMillis();
-                        long endDateLong = sharedPreferences.getLong("endTime",0);
+                        long endDateLong = sharedPreferences.getLong("endDate",0);
                         long halfOfSemester = endDateLong - 4665600000L;
 
                         if(currentDate > endDateLong){
-                            Log.d("myLogs2","HERE3") ;
 
                             if(currentDate > halfOfSemester){
                                 editor.putBoolean("halfOfSemester",true);
                                 editor.apply();
-                                Log.d("myLogs2","HERE4") ;
                             }
 
                             if(isNetworkAvailable()){
                                 mQueue = Volley.newRequestQueue(getApplicationContext());
                                 try{
                                     c = myDB.getAllDataTimes();
-                                    Log.d("myLogs2","here 4.5 " + c.getCount());
                                     c.close();
                                 }catch (NullPointerException e){
                                     e.printStackTrace();
@@ -199,7 +186,6 @@ public class SplashActivity extends AppCompatActivity {
                                 mQueue = Volley.newRequestQueue(getApplicationContext());
                                 jsonParseSemester();
 
-                                Log.d("myLogs2","HERE5") ;
 
                               try{
                                   c = myDB.getAllDataSemester();
@@ -228,10 +214,8 @@ public class SplashActivity extends AppCompatActivity {
                                               editor.putBoolean("oldDataFound", true);
                                               editor.putBoolean("ableToUpdate", false);
                                           }
-                                          Log.d("myLogs2","HERE6");
                                           editor.apply();
                                       }else if (mills > oldDate){
-                                          Log.d("myLogs2","HERE7") ;
                                             if(sharedPreferences.contains("ableToUpdate") && !sharedPreferences.getBoolean("ableToUpdate",true)){
                                                 if(sharedPreferences.getString("oldGroup","").equals(sharedPreferences.getString("newGroup",""))) {
                                                   editor.putBoolean("ableToUpdate",false);
@@ -276,7 +260,6 @@ public class SplashActivity extends AppCompatActivity {
                     sleep(1500);
 
                     if(!isNetworkAvailable() && sharedPreferences.getBoolean("isFirstLaunch",false)){
-                        Log.d("myLogs2","her");
                         finish();
                     } else{
                         startActivity(intent);
@@ -328,7 +311,6 @@ public class SplashActivity extends AppCompatActivity {
                         toTime = time.getString("to");
 
                         isInserted = myDB.insertDataTimes(lessonNumber,fromTime,toTime);
-                        Log.d("times", String.valueOf(isInserted) + i);
 
                     }
 
@@ -370,7 +352,6 @@ public class SplashActivity extends AppCompatActivity {
                     isNumeratorInt = (isNumerator) ? 1 : 0;
 
                     isInserted = myDB.insertDataSemester(startDate,endDate,isNumeratorInt);
-                    Log.d("semester", String.valueOf(isInserted));
 
                     myDB.close();
 
@@ -407,10 +388,7 @@ public class SplashActivity extends AppCompatActivity {
 
         new DownloadXmlTask().execute(URL);
 
-
     }
-
-
     private class DownloadXmlTask extends AsyncTask<String, Integer, Integer> {
 
 
@@ -432,7 +410,6 @@ public class SplashActivity extends AppCompatActivity {
         @Override
         protected Integer doInBackground(String... urls) {
             try {
-                Log.d("newsXml","here2");
                return loadXmlFromNetwork(urls[0]);
             } catch (IOException e) {
                 return 0;
@@ -454,7 +431,6 @@ public class SplashActivity extends AppCompatActivity {
             boolean isInserted;
 
             try {
-                Log.d("newsXml","here3");
                 stream = downloadUrl(urlString);
                 items = XmlParser.parse(stream);
             } finally {
@@ -468,7 +444,6 @@ public class SplashActivity extends AppCompatActivity {
             for (NewsXMLParser.Item item : items) {
              item = new NewsXMLParser.Item(item.titleNews,item.link,item.description,item.date,item.author);
                 isInserted =  myDB.insertNews(item.link, item.titleNews, item.description, item.author, item.date, dbBitmapUtility.getBytes(img));
-                Log.d("newsXml", String.valueOf(isInserted));
             }
 
             myDB.close();
@@ -486,7 +461,6 @@ public class SplashActivity extends AppCompatActivity {
             conn.setDoInput(true);
             // Starts the query
             conn.connect();
-            Log.d("newsXml","here4");
             return conn.getInputStream();
         }
     }

@@ -28,6 +28,7 @@ public class NewsFragment extends Fragment {
     DatabaseHelper myDB;
     private RecyclerView recyclerView;
     private MyAdapter mAdapter;
+    String URL = "url";
 
     @Nullable
     @Override
@@ -59,12 +60,8 @@ public class NewsFragment extends Fragment {
         mAdapter.setButtonItemClickListener(new OnButtonItemClickListener() {
             @Override
             public void onButtonIsClick(View button, int position) {
-                itemsList.get(position);
-                Log.d("myButton",String.valueOf(itemsList.size()));
-
                 Intent intent = new Intent(getActivity(),MyWebView.class);
 
-                String URL = "url";
                 String link = itemsList.get(position).getUrl();
                 intent.putExtra(URL, link);
                 startActivity(intent);
@@ -88,15 +85,10 @@ public class NewsFragment extends Fragment {
                if(c.moveToFirst()) {
                    while(!c.isAfterLast()) {
                        array[i] = new MyItem("","","","","",null);
-                       Log.d("SecretLogs", c.getString(c.getColumnIndex("url")));
                        array[i].setUrl(c.getString(c.getColumnIndex("url")));
-                       Log.d("SecretLogs", c.getString(c.getColumnIndex("title")));
                        array[i].setTitle(c.getString(c.getColumnIndex("title")));
-                       Log.d("SecretLogs", c.getString(c.getColumnIndex("summary")));
                        array[i].setSummary(c.getString(c.getColumnIndex("summary")));
-                       Log.d("SecretLogs", c.getString(c.getColumnIndex("date")));
-                       array[i].setDate(c.getString(c.getColumnIndex("date")));
-                       Log.d("SecretLogs", c.getString(c.getColumnIndex("author")));
+                       array[i].setDate(c.getString(c.getColumnIndex("date")));;
                        array[i].setAuthor(c.getString(c.getColumnIndex("author")));
                        array[i].setImg(c.getBlob(c.getColumnIndex("image")));
                        i++;

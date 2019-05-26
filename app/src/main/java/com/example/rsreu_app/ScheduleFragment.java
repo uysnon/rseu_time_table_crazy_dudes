@@ -37,7 +37,6 @@ import java.util.GregorianCalendar;
 
 public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
 
-    private static final String DATE_KEY = "day_key";
     public static final String APP_PREFERENCES_DATE = "Date_preference";
 
     MyPager pager;
@@ -88,7 +87,6 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d("lifecycle","onCreateView");
         View view = inflater.inflate(R.layout.fragment_schedule, container, false);
         mSharedPreferencesDate = getActivity().getSharedPreferences(MainActivity.myPreference, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = mSharedPreferencesDate.edit();
@@ -133,8 +131,6 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         }
 
 
-
-        Log.d("SCHEDULE_FRAGMENT", "ОНКРЕАТЕ ВЬЮ");
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SplashActivity.myPreference, Context.MODE_PRIVATE);
         int group = Integer.valueOf(sharedPreferences.getString(MainActivity.groupKey, "0"));
         mDoubleWeek = new DoubleWeek(Week.createWeek(getActivity(), true, group  ), Week.createWeek(getActivity(), false, group));
@@ -249,15 +245,12 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
      */
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        Log.d("DATE", year + " " + month + " " + dayOfMonth);
         GregorianCalendar dateG = new GregorianCalendar(year, month, dayOfMonth);
         mDate = dateG.getTime();
         mCurrentDayOfWeek = gregorianDayOfWeekToRussian(dateG.get(dateG.DAY_OF_WEEK));
         if (!Week.isDateNumerator(mDate, mFirstDayOfSemester, mIsFirstDayNumerator)) {
             mCurrentDayOfWeek = mCurrentDayOfWeek + 7;
         }
-        Log.d("dataG", "dataG.get" + dateG.get(dateG.DAY_OF_WEEK));
-        Log.d("dataG", "mCurrentDayOfWeek" + mCurrentDayOfWeek);
 
         updateTimeTable();
 
@@ -284,15 +277,6 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         pager.setCurrentItem(mCurrentDayOfWeek - 1);
         updateTextViewDate();
 
-//        if (mWeek.isNumerator() == Week.isDateNumerator(mDate, mFirstDayOfSemester, mIsFirstDayNumerator)) {
-//            pager.setCurrentItem(mCurrentDayOfWeek - 1);
-//            updateTextViewDate();
-//        } else {
-//                mWeek = Week.createWeek(getActivity(), !mWeek.isNumerator());
-//                mPageAdapter.setWeek(mWeek);
-//                pager.setCurrentItem(mCurrentDayOfWeek - 1);
-//                updateTextViewDate();
-//            }
     }
 
     private void updateDayOfWeek() {

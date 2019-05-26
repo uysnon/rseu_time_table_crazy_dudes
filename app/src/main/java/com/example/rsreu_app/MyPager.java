@@ -38,10 +38,7 @@ public class MyPager  extends ViewPager {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int mode = MeasureSpec.getMode(heightMeasureSpec);
-        // Unspecified means that the ViewPager is in a ScrollView WRAP_CONTENT.
-        // At Most means that the ViewPager is not in a ScrollView WRAP_CONTENT.
         if (mode == MeasureSpec.UNSPECIFIED || mode == MeasureSpec.AT_MOST) {
-            // super has to be called in the beginning so the child views can be initialized.
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             int height = 0;
             for (int i = 0; i < getChildCount(); i++) {
@@ -51,9 +48,8 @@ public class MyPager  extends ViewPager {
                 if (h > height) height = h;
             }
             heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
-            heightMeasureSpec = round(heightMeasureSpec); // nearest thousand, 2000.0
+            heightMeasureSpec = round(heightMeasureSpec);
         }
-        // super has to be called again so the new specs are treated as exact measurements
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 

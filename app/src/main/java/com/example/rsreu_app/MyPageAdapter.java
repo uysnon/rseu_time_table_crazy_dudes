@@ -16,7 +16,6 @@ public class MyPageAdapter extends FragmentStatePagerAdapter {
     /**
      * Текущий день (пн-1;..вс-7)
      */
-    int numDay;
 
     public MyPageAdapter(FragmentManager fm, DoubleWeek doubleWeek) {
         super(fm);

@@ -34,8 +34,8 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        String[] textSettings = { getActivity().getString(R.string.contacts),getActivity().getString(R.string.about_application), getActivity().getString(R.string.about_developers)};
-        int imageSettings[] = { R.drawable.ic_contacts_blue_24dp ,R.drawable.ic_phonelink_setup_blue_24dp, R.drawable.ic_man_in_a_gear_blue};
+        String[] textSettings = { getActivity().getString(R.string.contacts),getActivity().getString(R.string.about_application), getActivity().getString(R.string.about_developers),getActivity().getString(R.string.help)};
+        int[] imageSettings = { R.drawable.ic_contacts_blue_24dp ,R.drawable.ic_phonelink_setup_blue_24dp, R.drawable.ic_man_in_a_gear_blue, R.drawable.ic_help_outline_blue_24dp};
 
         listView = view.findViewById(R.id.list);
 
@@ -87,6 +87,16 @@ public class SettingsFragment extends Fragment {
                     AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
                     mBuilder.setCancelable(true);
                     View mView = getLayoutInflater().inflate(R.layout.dialog_about_developers,null);
+
+                    mBuilder.setView(mView);
+                    AlertDialog dialog = mBuilder.create();
+                    dialog.show();
+                }
+
+                if(position == 3){
+                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+                    mBuilder.setCancelable(true);
+                    View mView = getLayoutInflater().inflate(R.layout.dialog_help,null);
 
                     mBuilder.setView(mView);
                     AlertDialog dialog = mBuilder.create();
