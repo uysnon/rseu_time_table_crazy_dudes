@@ -223,6 +223,6 @@ public class Lesson implements Serializable {
     }
 
     private static String getTimeLesson(String from, String to) {
-        return (from + "\n - \n" + to);
+        return (from + " - " + to);
     }
 }
