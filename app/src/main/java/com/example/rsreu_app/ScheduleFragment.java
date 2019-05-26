@@ -202,10 +202,10 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
                     Lesson lesson = currentDay.getLessons().get(i);
                     textSharing = textSharing + (i + 1)+ ") "
                             + lesson.getTimeFromTimeId(getActivity())+ " " +
-                            lesson.getTitle();
+                            lesson.getTitleTypeOptional();
 
                     if (!lesson.getRoom().equals("")) {
-                        textSharing = textSharing + " (" + lesson.getRoom() + ")" + "\n";
+                        textSharing = textSharing + " (" + lesson.getRoomBuilding() + ")" + "\n";
                     } else {
                         textSharing = textSharing + "\n";
                     }
