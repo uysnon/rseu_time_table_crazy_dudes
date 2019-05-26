@@ -210,25 +210,36 @@ public class SplashActivity extends AppCompatActivity {
                                   try {
                                       Date date = sdf.parse(endDate);
                                       long mills = date.getTime();
-
                                       long oldDate = sharedPreferences.getLong("endDate",0);
                                       Log.d("myLogs2Old",String.valueOf(oldDate));
                                       Log.d("myLogs2Mills",String.valueOf(mills));
+                                      String groupOld = sharedPreferences.getString("oldGroup",null);
+                                      String groupNew = sharedPreferences.getString("newGroup",null);
                                       if(mills == oldDate){
                                           if(sharedPreferences.contains("oldDataFound") && !sharedPreferences.getBoolean("oldDataFound",true)){
-                                              editor.putBoolean("ableToUpdate",false);
-                                              editor.putBoolean("oldDataFound",false);
+                                              if(sharedPreferences.getString("oldGroup","").equals(sharedPreferences.getString("newGroup",""))) {
+                                                  editor.putBoolean("oldDataFound", false);
+                                                  editor.putBoolean("ableToUpdate", false);
+                                              }else{
+                                                  editor.putBoolean("oldDataFound", true);
+                                                  editor.putBoolean("ableToUpdate", false);
+                                              }
                                           }else {
                                               editor.putBoolean("oldDataFound", true);
                                               editor.putBoolean("ableToUpdate", false);
                                           }
-                                          Log.d("myLogs2","HERE6") ;
+                                          Log.d("myLogs2","HERE6");
                                           editor.apply();
                                       }else if (mills > oldDate){
                                           Log.d("myLogs2","HERE7") ;
                                             if(sharedPreferences.contains("ableToUpdate") && !sharedPreferences.getBoolean("ableToUpdate",true)){
+                                                if(sharedPreferences.getString("oldGroup","").equals(sharedPreferences.getString("newGroup",""))) {
                                                   editor.putBoolean("ableToUpdate",false);
                                                   editor.putBoolean("oldDataFound",false);
+                                                }else{
+                                                    editor.putBoolean("oldDataFound", false);
+                                                    editor.putBoolean("ableToUpdate", true);
+                                                }
                                               }else{
                                                 editor.putBoolean("ableToUpdate", true);
                                                 editor.putBoolean("oldDataFound", false);
@@ -244,7 +255,12 @@ public class SplashActivity extends AppCompatActivity {
                               }
                             }else{
                                 if(sharedPreferences.contains("isUpdateRequired") && !sharedPreferences.getBoolean("isUpdateRequired",true)){
-                                   editor.putBoolean("isUpdateRequired", false);
+                                    if(sharedPreferences.getString("oldGroup","").equals(sharedPreferences.getString("newGroup",""))) {
+                                        editor.putBoolean("isUpdateRequired", false);
+                                    }else{
+                                        editor.putBoolean("isUpdateRequired", true);
+                                    }
+                                    editor.apply();
                                 }else {
                                     editor.putBoolean("isUpdateRequired", true);
                                     editor.apply();
