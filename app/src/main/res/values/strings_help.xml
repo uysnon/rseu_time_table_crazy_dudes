@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="help">Справка</string>
+    <string name="convention">Условные обозначения, встречающиеся в программе:</string>
+    <string name="l_k">лк</string>
+    <string name="lecture"> - лекция</string>
+    <string name="l_b">лб</string>
+    <string name="lab_work"> - лабораторная работа</string>
+    <string name="p_z">пз</string>
+    <string name="practice"> - практическое занятие</string>
+    <string name="b_i">б.и. </string>
+    <string name="business"> - бизнес-инкубатор</string>
+</resources>

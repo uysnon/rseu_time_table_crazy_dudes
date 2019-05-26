@@ -23,13 +23,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
    DbBitmapUtility dbBitmapUtility = new DbBitmapUtility();
    OnButtonItemClickListener buttonItemClickListener;
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
      class MyViewHolder extends RecyclerView.ViewHolder {
 
-        OnButtonItemClickListener buttonItemClickListener;
-        // each data item is just a string in this case
         private TextView title;
         private TextView url;
         private TextView summary;
@@ -63,8 +58,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             image.setImageBitmap(dbBitmapUtility.getImage(myItem.getImg()));
         }
 
-
-
         private String getFormattedDate(String rawDate){
 
             SimpleDateFormat formatFrom = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z",Locale.US);
@@ -78,28 +71,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         }
     }
 
-    // Provide a suitable constructor (depends on the kind of dataset)
-  /*  public MyAdapter(List<MyItem> mItemList) {
-        myItemList = mItemList;
-    }*/
-
     public void setButtonItemClickListener(OnButtonItemClickListener buttonItemClickListener){
         this.buttonItemClickListener = buttonItemClickListener;
     }
 
-    // Create new views (invoked by the layout manager)
     @Override
     public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
          View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_item_view,parent,false);
          return new MyAdapter.MyViewHolder(view);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
         if(buttonItemClickListener != null){
             holder.getButton().setOnClickListener(new View.OnClickListener(){
                 @Override
@@ -113,7 +96,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         holder.bind(myItemList.get(position));
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return myItemList.size();
@@ -125,8 +107,4 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
          notifyDataSetChanged();
     }
 
-    public void clearItems() {
-        myItemList.clear();
-        notifyDataSetChanged();
-    }
 }

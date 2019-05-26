@@ -7,7 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class DbBitmapUtility {
-    // convert from bitmap to byte array
+
     public byte[] getBytes(Bitmap bitmap) throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
@@ -16,7 +16,6 @@ public class DbBitmapUtility {
         return stream.toByteArray();
     }
 
-    // convert from byte array to bitmap
     public  Bitmap getImage(byte[] image) {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
     }

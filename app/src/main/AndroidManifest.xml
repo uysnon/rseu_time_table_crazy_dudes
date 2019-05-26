@@ -34,7 +34,8 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity
             android:name=".MyWebView"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
