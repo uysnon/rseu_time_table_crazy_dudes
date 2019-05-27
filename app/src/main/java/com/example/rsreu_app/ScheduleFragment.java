@@ -143,8 +143,8 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         int group = Integer.valueOf(mSharedPreferences.getString(MainActivity.groupKey, "0"));
         mDoubleWeek = new DoubleWeek(Week.createWeek(getActivity(), true, group  ), Week.createWeek(getActivity(), false, group));
         if (mDoubleWeek.getLongWeek() != null) {
-            mPageAdapter = new MyPageAdapter(getFragmentManager(), mDoubleWeek);
-            pager.setAdapter(new MyPageAdapter(getFragmentManager(), mDoubleWeek));
+            mPageAdapter = new MyPageAdapter(getFragmentManager(), mDoubleWeek, getContext());
+            pager.setAdapter(new MyPageAdapter(getFragmentManager(), mDoubleWeek, getContext()));
         }
 
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -161,9 +161,6 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
                 }
             }
         });
-
-
-
 
 
         mLayoutGoNext.setOnClickListener(new View.OnClickListener() {
@@ -284,7 +281,8 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
      * Обновление содержимого таблицы с учетом установления новой даты;
      */
     private void updateTimeTable() {
-        updateMode();
+        updateSharedPreferencesDate();
+//        updateMode();
         pager.setCurrentItem(mCurrentDayOfWeek - 1);
         updateTextViewDate();
 
@@ -335,6 +333,7 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         mDate = c.getTime();
         updateDayOfWeek();
         updateTimeTable();
+
     }
 
     private void prevPage() {
@@ -344,6 +343,7 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         mDate = c.getTime();
         updateDayOfWeek();
         updateTimeTable();
+
     }
 
     public static boolean isDateInCurrentSemester(){
@@ -354,11 +354,11 @@ public class ScheduleFragment extends Fragment implements DatePickerDialog.OnDat
         return true;
     }
 
-    private static void updateMode(){
-        isDateInSemester = !((mDate.compareTo(mFirstDayOfSemester) < 0) ||
-                (mDate.compareTo(mLastDayOfSemester) > 0));
-
-    }
+//    private static void updateMode(){
+//        isDateInSemester = !((mDate.compareTo(mFirstDayOfSemester) < 0) ||
+//                (mDate.compareTo(mLastDayOfSemester) > 0));
+//
+//    }
 
     private void updateSharedPreferencesDate(){
         SharedPreferences.Editor editor = mSharedPreferences.edit();

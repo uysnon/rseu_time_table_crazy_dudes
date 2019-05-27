@@ -45,6 +45,11 @@ public class Week implements Serializable {
         return days;
     }
 
+    public ArrayList<Day> getDays(Date date) {
+        return days;
+    }
+
+
     public boolean isNumerator() {
         return numerator;
     }

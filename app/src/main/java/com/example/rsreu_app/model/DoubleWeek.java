@@ -3,6 +3,7 @@ package com.example.rsreu_app.model;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class DoubleWeek {
     Week mDoubleWeek;
@@ -20,6 +21,17 @@ public class DoubleWeek {
 
     public Week getLongWeek() {
         return mDoubleWeek;
+    }
+
+    public Day getDay(int dayOfWeek, Date date){
+        Day day = getLongWeek().getDays().get(dayOfWeek);
+        for (int i = 0; i < day.getLessons().size(); i++){
+            Lesson lesson = day.getLessons().get(i);
+            if (!lesson.isDateInDates(date)){
+                day.getLessons().remove(i);
+            }
+        }
+        return day;
     }
 
     public Week getNumerator() {

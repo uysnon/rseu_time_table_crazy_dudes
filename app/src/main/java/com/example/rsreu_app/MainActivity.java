@@ -47,6 +47,8 @@ import org.json.JSONObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -176,6 +178,32 @@ public class MainActivity extends AppCompatActivity {
         if (!sharedPreferences.getBoolean("isFirstLaunch", false)) {
             sharedPreferences.edit().putString("oldGroup", groupNumber.getText().toString()).apply();
         }
+
+        String endDate, startDate;
+        Cursor c;
+        myDB = new DatabaseHelper(this);
+        try {
+            c = myDB.getAllDataSemester();
+            c.moveToLast();
+            endDate = c.getString(c.getColumnIndex("endDate"));
+            startDate = c.getString(c.getColumnIndex("startDate"));
+            c.close();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+            try{
+                Date dateStart = sdf.parse(startDate);
+                long millsStart = dateStart.getTime();
+                getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit().putLong("startDate",millsStart).apply();
+                Date dateEnd = sdf.parse(endDate);
+                long millsEnd = dateEnd.getTime();
+                getSharedPreferences(myPreference,Context.MODE_PRIVATE).edit().putLong("endDate1",millsEnd).apply();
+            }catch (ParseException e){
+                e.printStackTrace();
+            }
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -226,7 +254,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 groupNumber = findViewById(R.id.groupNumber);
                 editTextValue = edittext.getText().toString();
+
                 if (!editTextValue.equals("")) {
+                    Cursor c;
                     if (isFirstLaunch) {
                         if (isNetworkAvailable()) {
                             mQueue = Volley.newRequestQueue(getApplicationContext());
@@ -240,7 +270,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     } else {
                         getSharedPreferences(myPreference, Context.MODE_PRIVATE).edit().putString("oldGroup", groupNumber.getText().toString()).apply();
-                        Cursor c;
                         try {
                             c = myDB.getGroupCreateTime(Integer.parseInt(editTextValue));
                             Log.d("myLogs3", String.valueOf(c.getCount()));
@@ -405,7 +434,9 @@ public class MainActivity extends AppCompatActivity {
                         build = numerator.getString("build");
                         //date pattern dd.MM парсить строку до запятой и пихнуть в массив дату, и так пока видим запятые
                         dates = numerator.getString("dates");
-
+                        if(!dates.equals("")){
+                            weekBool = 2;
+                        }
                         isInserted = myDB.insertDataSchedule(Integer.valueOf(groupNumberUrl), weekDay, timeId, duration, optional, title, type, teachers, room, build, dates, weekBool);
 
                         Log.d("myLogs", String.valueOf(isInserted + Integer.toString(i)));
@@ -424,7 +455,9 @@ public class MainActivity extends AppCompatActivity {
                         room = denominator.getString("room");
                         build = denominator.getString("build");
                         dates = denominator.getString("dates");
-
+                        if(!dates.equals("")){
+                            weekBool = 2;
+                        }
                         isInserted = myDB.insertDataSchedule(Integer.valueOf(groupNumberUrl), weekDay, timeId, duration, optional, title, type, teachers, room, build, dates, weekBool);
 
                         Log.d("myLogs", String.valueOf(isInserted + Integer.toString(i)));

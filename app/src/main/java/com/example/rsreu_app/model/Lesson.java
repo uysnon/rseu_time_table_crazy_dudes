@@ -6,7 +6,11 @@ import android.database.Cursor;
 import com.example.rsreu_app.DatabaseHelper;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Lesson implements Serializable {
     private static final String FULL_NAME_LECTURE = "Лекция";
@@ -35,7 +39,7 @@ public class Lesson implements Serializable {
     private String teachers;
     private String room;
     private String build;
-    private String dates;
+    private ArrayList<Date> dates;
 
     public Lesson(
             int timeId,
@@ -56,7 +60,11 @@ public class Lesson implements Serializable {
         this.teachers = teachers;
         this.room = room;
         this.build = build;
-        this.dates = dates;
+        try {
+            this.dates = getDatesFromString(dates);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -93,7 +101,7 @@ public class Lesson implements Serializable {
         return build;
     }
 
-    public String getDates() {
+    public ArrayList<Date> getDates() {
         return dates;
     }
 
@@ -130,8 +138,22 @@ public class Lesson implements Serializable {
         this.build = build;
     }
 
-    public void setDates(String dates) {
-        this.dates = dates;
+    public void setDates(String dates) throws ParseException {
+        this.dates = getDatesFromString(dates);
+    }
+
+    private ArrayList<Date>  getDatesFromString (String input) throws ParseException {
+        ArrayList <Date> outPut = new ArrayList<>();
+        if (input.equals("")) return outPut;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
+        String strings[] = input.split(", ");
+        for (int i = 0; i< strings.length; i++){
+            Date date = sdf.parse(strings[i]);
+            Date baseDate = new Date();
+            date.setYear(Calendar.getInstance().get(Calendar.YEAR)-1900);
+            outPut.add(date);
+        }
+        return outPut;
     }
 
     public String getTitleTypeOptional() {
@@ -220,6 +242,18 @@ public class Lesson implements Serializable {
         }
         return "";
 
+    }
+
+     public boolean isDateInDates(Date date){
+        if (this.dates.size() == 0){
+            return  true;
+        }
+        for (int i = 0; i < this.dates.size(); i++){
+            if (date.compareTo(this.dates.get(i)) == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static String getTimeLesson(String from, String to) {
