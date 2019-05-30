@@ -42,8 +42,8 @@ public class MyPageAdapter extends FragmentStatePagerAdapter {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(MainActivity.myPreference, Context.MODE_PRIVATE);
         Date date = new Date(sharedPreferences.getLong(ScheduleFragment.APP_PREFERENCES_DATE, 0));
         Date startDateSemester = new Date(sharedPreferences.getLong("startDate", 0));
-        Date endDateSemester = new Date(sharedPreferences.getLong("endDate", 0));
-
+        Date endDateSemester = new Date(sharedPreferences.getLong("endDate1", 0));
+        int a = 1;
         if (!(isDateInCurrentSemester(startDateSemester, endDateSemester, date))) {
             return (PageFragment.newInstance(mDoubleWeek.getDay(position, date), PageFragment.MODE_NOT_DATA_FROM_SEMESTER));
         } else if (mDoubleWeek.getDay(position, date).getLessons().size() == 0) {

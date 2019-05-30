@@ -160,7 +160,7 @@ public class Lesson implements Serializable {
         String result = "";
         result = result + this.title;
         if (!(this.title.equals(FULL_NAME_MILITARY_TRAINING)||(this.title.equals(FULL_NAME_MILITARY_PE)))){
-            result = result + " (" + getBriefType() + getOptionalType() + ")";
+            result = result + " (" + getBriefType() + " " + getOptionalType() + ")";
         }
         return result;
     }
